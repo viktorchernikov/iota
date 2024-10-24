@@ -1,9 +1,14 @@
-// Some stupid rigidbody based movement by Dani
-
 using System;
 using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour {
+
+    public bool ninjaMode = false;
+
+    public Animator viewModelAnimator;
+    public float animationMoveSpeed = 0f;
+    public float animationMoveSpeedLerp = 0.125f;
+    public GameObject viewModel;
 
     //Assingables
     public Transform playerCam;
@@ -14,7 +19,7 @@ public class PlayerMovement : MonoBehaviour {
 
     //Rotation and look
     private float xRotation;
-    private float sensitivity = 50f;
+    public float sensitivity = 50f;
     private float sensMultiplier = 1f;
     
     //Movement
@@ -61,28 +66,48 @@ public class PlayerMovement : MonoBehaviour {
     
     private void FixedUpdate() {
         Movement();
-        Debug.Log($"Velocity: {rb.velocity.magnitude}");
     }
 
     private void Update() {
         MyInput();
         Look();
+        AnimateViewmodel();
+        viewModel.SetActive(ninjaMode);
     }
 
     /// <summary>
     /// Find user input. Should put this in its own class but im lazy
     /// </summary>
     private void MyInput() {
-        x = Input.GetAxisRaw("Horizontal");
-        y = Input.GetAxisRaw("Vertical");
-        jumping = Input.GetButton("Jump");
-        crouching = Input.GetKey(KeyCode.LeftControl);
-      
+        Vector2 input = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
+        input.Normalize();
+        x = input.x;
+        y = input.y;
+        if (ninjaMode)
+        {
+            jumping = Input.GetButton("Jump");
+        }
+        crouching = ninjaMode ? Input.GetKey(KeyCode.LeftControl) : false;
+        sprinting = ninjaMode ? Input.GetKey(KeyCode.LeftShift) : false;
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            ninjaMode = !ninjaMode;
+        }
+
+
         //Crouching
-        if (Input.GetKeyDown(KeyCode.LeftControl))
-            StartCrouch();
-        if (Input.GetKeyUp(KeyCode.LeftControl))
-            StopCrouch();
+        if (ninjaMode)
+        {
+            if (Input.GetKeyDown(KeyCode.LeftControl))
+                StartCrouch();
+            if (Input.GetKeyUp(KeyCode.LeftControl))
+                StopCrouch();
+        }
+    }
+    private void AnimateViewmodel()
+    {
+        animationMoveSpeed = Mathf.Lerp(animationMoveSpeed, rb.velocity.magnitude, animationMoveSpeedLerp * Time.deltaTime);
+        viewModelAnimator.SetFloat("MoveSpeed", animationMoveSpeed);
     }
 
     private void StartCrouch() {
@@ -117,6 +142,10 @@ public class PlayerMovement : MonoBehaviour {
 
         //Set max speed
         float maxSpeed = holdingSprint ? this.sprintSpeed : this.walkSpeed;
+        if (ninjaMode)
+        {
+            maxSpeed *= 2f;
+        }
         
         //If sliding down a ramp, add force down so player stays grounded and also builds speed
         if (crouching && grounded && readyToJump) {
@@ -205,11 +234,16 @@ public class PlayerMovement : MonoBehaviour {
         if (Math.Abs(mag.y) > threshold && Math.Abs(y) < 0.05f || (mag.y < -threshold && y > 0) || (mag.y > threshold && y < 0)) {
             rb.AddForce(moveSpeed * orientation.transform.forward * Time.deltaTime * -mag.y * counterMovement);
         }
-        
+
+        float maxSpeed = sprinting ? sprintSpeed : walkSpeed;
+        if (ninjaMode)
+        {
+            maxSpeed *= 2f;
+        }
         //Limit diagonal running. This will also cause a full stop if sliding fast and un-crouching, so not optimal.
-        if (Mathf.Sqrt((Mathf.Pow(rb.velocity.x, 2) + Mathf.Pow(rb.velocity.z, 2))) > walkSpeed) {
+        if (Mathf.Sqrt((Mathf.Pow(rb.velocity.x, 2) + Mathf.Pow(rb.velocity.z, 2))) > maxSpeed) {
             float fallspeed = rb.velocity.y;
-            Vector3 n = rb.velocity.normalized * walkSpeed;
+            Vector3 n = rb.velocity.normalized * maxSpeed;
             rb.velocity = new Vector3(n.x, fallspeed, n.z);
         }
     }
