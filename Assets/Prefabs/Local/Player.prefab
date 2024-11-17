@@ -377,7 +377,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   viewAngles: {x: 0, y: 0}
   canLook: 1
-  sensitivity: {x: 1, y: 1}
+  sensitivity: {x: 2, y: 2}
   minPitch: -90
   maxPitch: 90
   anchorPoint: {fileID: 2519206363539622068}
@@ -396,33 +396,51 @@ MonoBehaviour:
   _moveType: 0
   canMove: 1
   grounded: 0
-  walkSpeed: 0
-  sprintSpeed: 0
-  groundDrag: 0
+  walkSpeed: 3.75
+  sprintSpeed: 3.75
+  groundDrag: 6
   jumpForce: 0
   jumpCooldown: 0
-  airMultiplier: 0
+  airMultiplier: 0.5
   speedScalePropoprtion:
     serializedVersion: 2
-    m_Curve: []
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0.3
+      inSlope: 0.7
+      outSlope: 0.7
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0.7
+      outSlope: 0.7
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
   moveSpeed: 0
   StaminaWorkInSky: 1
   maxStamina: 100
-  staminaRegenRate: 10
-  sprintStaminaUsage: 20
-  minSprintStamina: 20
+  staminaRegenRate: 3.5
+  sprintStaminaUsage: 15
+  minSprintStamina: 0
   Whenlessthenstoprun: 5
   currentStamina: 0
-  jumpKey: 32
-  sprintKey: 304
+  jumpKey: 0
+  sprintKey: 0
   groundCheckDistance: 0.3
   groundCheckOffset: 0.01
   whatIsGround:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 1
   speedofplayul: 0.1
   audiocanplay: 1
   defaultSounds: []
