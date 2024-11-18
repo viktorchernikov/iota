@@ -43,7 +43,6 @@ public class Monster : MonoBehaviour
 
     private void LateUpdate()
     {
-        Debug.Log(agent.velocity.magnitude);
         animator.SetFloat("Speed", agent.velocity.magnitude);
     }
     #endregion
