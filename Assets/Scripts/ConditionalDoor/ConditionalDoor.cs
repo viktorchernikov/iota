@@ -1,27 +1,31 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
-public abstract class ConditionalDoor : MonoBehaviour
+public class ConditionalDoor : MonoBehaviour
 {
-    [SerializeReference] private List<Condition> _conditions = new List<Condition>();
-    private List<Condition> _emittedConditions = new List<Condition>();
+    [SerializeReference] private List<DoorCondition> _activators = new List<DoorCondition>();
+    private Transform _transform;
     
     private void Awake()
     {
-        _conditions.ForEach(con => con.AddConditionListener(() => ConditionHandler(con)));
+        _activators.ForEach(doorActivator => doorActivator.OnConditionFulfilmentChange += ConditionHandler);
+        _transform = GetComponent<Transform>();
     }
 
-    private void ConditionHandler(Condition condition)
+    private void ConditionHandler()
     {
-        if (_emittedConditions.Contains(condition)) return;
-        
-        _emittedConditions.Add(condition);
-
-        if (_emittedConditions.Count == _conditions.Count)
-        {
-            OnAllConditionEmitted();
-        }
+        if (_activators.All(activator => activator.GetConditionFulfilment())) Open();
+        else Close();
     }
 
-    protected virtual void OnAllConditionEmitted() {}
+    private void Open()
+    {
+        _transform.rotation = Quaternion.Euler( _transform.rotation.eulerAngles.x, 90,  _transform.rotation.eulerAngles.z);
+    }
+
+    private void Close()
+    {
+        _transform.rotation = Quaternion.Euler( _transform.rotation.eulerAngles.x, 0,  _transform.rotation.eulerAngles.z);
+    }
 }
