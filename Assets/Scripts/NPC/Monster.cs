@@ -11,6 +11,7 @@ public class Monster : MonoBehaviour
 {
     [Header("Components")]
     [SerializeField] NavMeshAgent agent;
+    [SerializeField] Animator animator;
     [Header("General")]
     public MonsterBehaviourMode behaviourMode = MonsterBehaviourMode.Patrol;
     public Transform eyesPoint;
@@ -37,6 +38,15 @@ public class Monster : MonoBehaviour
     {
         agent = GetComponent<NavMeshAgent>();
     }
+
+    #region Looks
+
+    private void LateUpdate()
+    {
+        Debug.Log(agent.velocity.magnitude);
+        animator.SetFloat("Speed", agent.velocity.magnitude);
+    }
+    #endregion
 
     #region Logic
     private void FixedUpdate()
