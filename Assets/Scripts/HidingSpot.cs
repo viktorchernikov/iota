@@ -57,14 +57,14 @@ public class HidingSpot : MonoBehaviour, IInteractable
     {
         hasPlayer = true;
         player.HideInSpot(this);
-        yield return new WaitForSeconds(delayEnter);
+        yield return new WaitForSeconds(player.hidingTime + delayEnter);
         isBusy = false;
     }
     IEnumerator OnPlayerLeave(Player player)
     {
         hasPlayer = false;
         player.UnhideFromSpot();
-        yield return new WaitForSeconds(delayExit);
+        yield return new WaitForSeconds(player.unhidingTime + delayExit);
         isBusy = false;
     }
 }

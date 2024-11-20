@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -52,6 +53,8 @@ public sealed class Player : MonoBehaviour, IInteractor
     /// Currently used type of the movement
     /// </summary>
     public PlayerMoveType moveType { get; private set; } = PlayerMoveType.Ground;
+    public float hidingTime = 1.25f;
+    public float unhidingTime = 1.25f;
     public static Player local { get; private set; }
     #endregion
     #region Components
@@ -94,19 +97,45 @@ public sealed class Player : MonoBehaviour, IInteractor
     }
     public void HideInSpot(HidingSpot spot)
     {
-        Vector3 cameraOffset = cameraAnchor.localPosition;
-        Teleport(spot.hidePoint.position - cameraOffset);
+        StartCoroutine(HideInSpotCo(spot));
+    }
+    IEnumerator HideInSpotCo(HidingSpot spot)
+    {
+        Vector3 destinationPos = spot.hidePoint.position;
+        Quaternion destinationRotation = spot.hidePoint.rotation;
+
+        duringCinematic = true;
         usedRigidbody.isKinematic = true;
+
+        yield return GetModule<PlayerCinematicController>().AdjustCameraPositionAndViewAngles(destinationPos, destinationRotation.eulerAngles, 3, 180);
+        yield return null;
+        Teleport(destinationPos - cameraAnchor.localPosition);
+
+        duringCinematic = false;
         isHiding = true;
         hidingSpot = spot;
+        yield return null;
     }
     public void UnhideFromSpot()
     {
-        Debug.Log("Unhide");
-        Teleport(hidingSpot.exitPoint);
-        usedRigidbody.isKinematic = false;
+        StartCoroutine(UnhideFromSpotCo());
+    }
+    IEnumerator UnhideFromSpotCo()
+    {
+        Vector3 destinationPos = hidingSpot.exitPoint.position;
+        Quaternion destinationRotation = hidingSpot.exitPoint.rotation;
+
+        duringCinematic = true;
+
+        yield return GetModule<PlayerCinematicController>().AdjustCameraPositionAndViewAngles(destinationPos + cameraAnchor.localPosition, destinationRotation.eulerAngles, 3, 180);
+        yield return null;
+        Teleport(destinationPos);
+
+        duringCinematic = false;
         isHiding = false;
         hidingSpot = null;
+        usedRigidbody.isKinematic = false;
+        yield return null;
     }
     public void SetDuringCinematic(bool isDuringCinematic)
     {

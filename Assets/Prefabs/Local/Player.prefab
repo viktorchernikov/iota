@@ -59,6 +59,7 @@ GameObject:
   - component: {fileID: 3218647248958157089}
   - component: {fileID: 3827639726254408705}
   - component: {fileID: 6355846757186079661}
+  - component: {fileID: 6925379343021918699}
   - component: {fileID: 3740628748043938264}
   - component: {fileID: 3578920615944526382}
   - component: {fileID: 7240982066532054418}
@@ -361,9 +362,66 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   initialScale: 1
+  hidingTime: 0.75
+  unhidingTime: 0.75
   ambientSource: {fileID: 0}
   modules: []
   _cameraAnchor: {fileID: 2519206363539622068}
+--- !u!114 &6925379343021918699
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1008716345198243770}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4edecfc14afdbe94fad35201f11d6561, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  adjustPosAndVeCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0.01
+      inSlope: 0.32581463
+      outSlope: 0.32581463
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 1
+    - serializedVersion: 3
+      time: 0.025908241
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 0.94954294
+      value: 1
+      inSlope: 0.003449004
+      outSlope: 0.003449004
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.11578734
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0.01
+      inSlope: -5.411465
+      outSlope: -5.411465
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.643905
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  audioSource: {fileID: 0}
 --- !u!114 &3740628748043938264
 MonoBehaviour:
   m_ObjectHideFlags: 0

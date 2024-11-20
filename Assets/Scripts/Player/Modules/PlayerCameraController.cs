@@ -33,7 +33,7 @@ public class PlayerCameraController : PlayerModule
     }
     public override void OnLateUpdate(float deltaTime)
     {
-        if (!canLook)
+        if (!canLook || parent.duringCinematic)
         {
             viewAngles = parent.usedCamera.viewAngles;
             return;
