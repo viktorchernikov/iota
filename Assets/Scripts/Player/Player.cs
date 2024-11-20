@@ -94,7 +94,8 @@ public sealed class Player : MonoBehaviour, IInteractor
     }
     public void HideInSpot(HidingSpot spot)
     {
-        Teleport(spot.hidePoint);
+        Vector3 cameraOffset = cameraAnchor.localPosition;
+        Teleport(spot.hidePoint.position - cameraOffset);
         usedRigidbody.isKinematic = true;
         isHiding = true;
         hidingSpot = spot;
