@@ -10,6 +10,8 @@ public sealed class Player : MonoBehaviour, IInteractor
     public float initialScale = 1f;
     #region State
     public bool duringCinematic { get; private set; } = false;
+    public bool isHiding { get; private set; }
+    public HidingSpot hidingSpot { get; private set; }
     public float currentScale { get; private set; } = 1;
     public PlayerDimensions currentDimensions { get; private set; } = new PlayerDimensions() { height = 2f, radius = 0.4f };
     /// <summary>
@@ -86,18 +88,24 @@ public sealed class Player : MonoBehaviour, IInteractor
     public void Teleport(Vector3 position)
     {
         Debug.Log($"Teleported from: {transform.position}");
-        if (moveType == PlayerMoveType.Ground)
-        {
-            usedRigidbody.Sleep();
-            usedRigidbody.position = position;
-            transform.position = position;
-            usedRigidbody.WakeUp();
-        }
-        else
-        {
-            throw new NotImplementedException("Other types of movement were not implemented yet!");
-        }
+        usedRigidbody.position = position;
+        transform.position = position;
         Debug.Log($"Teleported to: {transform.position}");
+    }
+    public void HideInSpot(HidingSpot spot)
+    {
+        Teleport(spot.hidePoint);
+        usedRigidbody.isKinematic = true;
+        isHiding = true;
+        hidingSpot = spot;
+    }
+    public void UnhideFromSpot()
+    {
+        Debug.Log("Unhide");
+        Teleport(hidingSpot.exitPoint);
+        usedRigidbody.isKinematic = false;
+        isHiding = false;
+        hidingSpot = null;
     }
     public void SetDuringCinematic(bool isDuringCinematic)
     {

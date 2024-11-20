@@ -36,6 +36,8 @@ public interface IInteractor
         return context;
     }
 
+    void UnhideFromSpot();
+
     /// <summary>
     /// Called when player interacted
     /// </summary>

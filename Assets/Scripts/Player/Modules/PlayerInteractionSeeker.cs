@@ -11,6 +11,7 @@ public class PlayerInteractionSeeker : PlayerModule
     #endregion
     #region Parameters
     public float maxSeekDistance = 3f;
+    public LayerMask tracedLayers = default(LayerMask);
     #endregion
 
     IInteractable _hoveredObject;
@@ -22,9 +23,9 @@ public class PlayerInteractionSeeker : PlayerModule
         base.OnFixedUpdate(deltaTime);
 
         IInteractable currentHover = null;
-        int count = Physics.RaycastNonAlloc(parent.usedCamera.forwardRay, hitObjects, maxSeekDistance * parent.currentScale);
+        int count = Physics.RaycastNonAlloc(parent.usedCamera.forwardRay, hitObjects, maxSeekDistance * parent.currentScale, tracedLayers.value);
 
-        if (count != 0 && IsGrounded())
+        if (count != 0)
         {
             Array.Sort(hitObjects, (a, b) => (b.distance.CompareTo(a.distance)));
 
@@ -57,7 +58,7 @@ public class PlayerInteractionSeeker : PlayerModule
         if (hoveredObject == null)
             return;
         
-        if (hoveredObject.CanInteract(parent) && GetInput() && IsGrounded())
+        if (hoveredObject.CanInteract(parent) && GetInput())
         {
             hoveredObject.OnInteract(parent);
         }

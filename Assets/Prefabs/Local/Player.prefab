@@ -377,6 +377,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxSeekDistance: 3
+  tracedLayers:
+    serializedVersion: 2
+    m_Bits: 55
 --- !u!114 &3578920615944526382
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -728,7 +731,7 @@ GameObject:
   - component: {fileID: 6905946935567619371}
   - component: {fileID: 1078019028856833030}
   - component: {fileID: 3850967224689112065}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Collider
   m_TagString: Player
   m_Icon: {fileID: 0}
