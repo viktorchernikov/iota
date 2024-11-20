@@ -62,7 +62,7 @@ public class PlayerMovement : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         seeker = GetComponent<PlayerInteractionSeeker>();
 
-        seeker.onHovered += handleOnHovered;
+        seeker.OnPlayerInteract += HandleOnPlayerInteract;
     }
     
     void Start() {
@@ -314,9 +314,8 @@ public class PlayerMovement : MonoBehaviour
         grounded = false;
     }
 
-    private void handleOnHovered(GameObject hower)
+    private void HandleOnPlayerInteract(GameObject hower)
     {
-        Debug.Log("Take katana");
         if (hower.CompareTag("katana")) hasKatana = true;
     }
 }

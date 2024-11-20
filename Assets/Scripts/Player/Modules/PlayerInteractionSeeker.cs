@@ -5,7 +5,7 @@ public class PlayerInteractionSeeker : PlayerModule
 {
     #region Events
     public event Action<IInteractable, IInteractable> onHoveredChange;
-    public event Action<GameObject> onHovered; 
+    public event Action<GameObject> OnPlayerInteract; 
     #endregion
     #region State
     public IInteractable hoveredObject { get; private set; }
@@ -37,7 +37,6 @@ public class PlayerInteractionSeeker : PlayerModule
                 if (obj.TryGetComponent(out interObj))
                 {
                     currentHover = interObj;
-                    Debug.Log(obj.tag);
                     currentHoveredGameObject = obj;
                     break;
                 }
@@ -63,7 +62,7 @@ public class PlayerInteractionSeeker : PlayerModule
         if (hoveredObject.CanInteract(parent) && GetInput() && IsGrounded())
         {
             hoveredObject.OnInteract(parent);
-            onHovered.Invoke(currentHoveredGameObject);
+            OnPlayerInteract.Invoke(currentHoveredGameObject);
         }
     }
 

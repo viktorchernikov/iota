@@ -1,7 +1,12 @@
 using UnityEngine;
 
-public class ObjectToTake : MonoBehaviour, IInteractable 
+public class ItemToTake : MonoBehaviour, IInteractable 
 {
+   public InteractableHoverResponse GetHoverResponse(IInteractor interactor)
+   {
+      return InteractableHoverResponse.Take;
+   }
+
    public bool CanInteract(IInteractor interactor)
    {
       return true;

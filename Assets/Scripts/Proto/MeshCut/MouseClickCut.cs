@@ -1,22 +1,28 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 public class MouseClickCut : MonoBehaviour
 {
-	public Player player;
+	private PlayerKatana _playerKatana = null;
 
-    void Update(){
-		if(Input.GetMouseButtonDown(0)){
-			RaycastHit hit;
-
-			if(Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, 4f)){
-				GameObject victim = hit.collider.gameObject;
-				if(victim.tag == "Cuttable")
-                {
-					Debug.Log("Cut");
-                    Cutter.Cut(victim, hit.point, Camera.main.transform.right);
-                }
-			}
-
-		}
+	private void Awake()
+	{
+		_playerKatana = GetComponent<PlayerKatana>();
 	}
+		
+    private void Update()
+    {
+	    Debug.Log(_playerKatana);
+	    if (_playerKatana.KatanaState != PlayerKatanaState.Holding) return;
+	    if (!Input.GetMouseButtonDown(0)) return;
+	    if (!Camera.main) throw new Exception("No main camera found");
+	    if (!Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out var hit, 4f)) return;
+	    
+	    var victim = hit.collider.gameObject;
+
+	    if (!victim.CompareTag("Cuttable")) return;
+	    
+	    Debug.Log("Cut");
+		Cutter.Cut(victim, hit.point, Camera.main.transform.right);
+    }
 }
