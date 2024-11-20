@@ -1,8 +1,9 @@
 ﻿using UnityEngine;
 
-public class Button : DoorCondition
+public class ConditionTestButton : MonoBehaviour
 {
     [SerializeField] private KeyCode keyToActivate;
+    [SerializeField] private PuzzleCondition condition;
     private Renderer _rend;
     
     private void Awake()
@@ -14,9 +15,13 @@ public class Button : DoorCondition
     private void Update()
     {
         if (!Input.GetKeyDown(keyToActivate)) return;
-        
-        SetConditionFulfilment(!GetConditionFulfilment());
-            
-        _rend.material.color = GetConditionFulfilment() ? Color.green: Color.red;
+
+        condition.InvertFulfillment();
+        UpdateRenderer();
+    }
+
+    private void UpdateRenderer()
+    {
+        _rend.material.color = condition.wasFulfilled ? Color.green : Color.red;
     }
 }

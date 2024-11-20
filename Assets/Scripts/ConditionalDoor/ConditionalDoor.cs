@@ -4,12 +4,12 @@ using UnityEngine;
 
 public class ConditionalDoor : MonoBehaviour
 {
-    [SerializeReference] private List<DoorCondition> _activators = new List<DoorCondition>();
+    [SerializeReference] private List<PuzzleCondition> _activators = new List<PuzzleCondition>();
     private Transform _transform;
     
     private void Awake()
     {
-        _activators.ForEach(doorActivator => doorActivator.OnConditionFulfilmentChange += ConditionHandler);
+        _activators.ForEach(doorActivator => doorActivator.onFulfilmentChange.AddListener(ConditionHandler));
         _transform = GetComponent<Transform>();
     }
 
