@@ -2,10 +2,10 @@
 
 public class MouseClickCut : MonoBehaviour
 {
-	public PlayerMovement player;
+	public Player player;
 
     void Update(){
-		if(Input.GetMouseButtonDown(0) && player.ninjaMode){
+		if(Input.GetMouseButtonDown(0)){
 			RaycastHit hit;
 
 			if(Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, 4f)){
