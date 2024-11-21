@@ -82,7 +82,6 @@ public class Cutter : MonoBehaviour
 
         
         isBusy = false;
-        Debug.Log(isBusy);
     }
 
     /// <summary>

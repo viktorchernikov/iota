@@ -20,6 +20,8 @@ public class PlayerKatana : MonoBehaviour
         _katanaModel.SetActive(false);
         _seeker = GetComponent<PlayerInteractionSeeker>();
         _seeker.OnPlayerInteract += PlayerInteractHandler;
+        if (State == PlayerKatanaState.Absent)
+            _katanaModel.SetActive(false);
     }
 
     private void PlayerInteractHandler(GameObject obj)

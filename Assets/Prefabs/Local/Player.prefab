@@ -62,6 +62,8 @@ GameObject:
   - component: {fileID: 3740628748043938264}
   - component: {fileID: 3578920615944526382}
   - component: {fileID: 7240982066532054418}
+  - component: {fileID: 8858209655271163833}
+  - component: {fileID: 3008212306100102402}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -464,6 +466,33 @@ MonoBehaviour:
   walkFootstepInterval: 0
   sprintFootstepInterval: 0
   VolumeOfFootstep: 0.7
+--- !u!114 &8858209655271163833
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1008716345198243770}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3269cec33b5e46d4bb3e72f1419b5a2f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _katanaModel: {fileID: 7850512758511519992}
+  _state: 0
+  _keyToHoldKatana: 49
+--- !u!114 &3008212306100102402
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1008716345198243770}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c441e77da270de245bc7db39fdba87f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &4149906136782952406
 GameObject:
   m_ObjectHideFlags: 0
@@ -476,7 +505,6 @@ GameObject:
   - component: {fileID: 7076055520091594614}
   - component: {fileID: 5450732446764298706}
   - component: {fileID: 919999908180359691}
-  - component: {fileID: 3965635467248760171}
   m_Layer: 0
   m_Name: PlayerCam
   m_TagString: MainCamera
@@ -688,19 +716,6 @@ MonoBehaviour:
       enableFptlForForwardOpaque: 0
       enableBigTilePrepass: 0
       isFptlEnabled: 0
---- !u!114 &3965635467248760171
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4149906136782952406}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c441e77da270de245bc7db39fdba87f9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  player: {fileID: 6355846757186079661}
 --- !u!1 &4374352126192340529
 GameObject:
   m_ObjectHideFlags: 0
@@ -973,6 +988,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: BF3_Rig
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 7b7f62e33a123084a9952c9debc4b182,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:
@@ -985,6 +1005,12 @@ PrefabInstance:
 --- !u!4 &7474092390621385282 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 7b7f62e33a123084a9952c9debc4b182,
+    type: 3}
+  m_PrefabInstance: {fileID: 6932154814928090537}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &7850512758511519992 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 7b7f62e33a123084a9952c9debc4b182,
     type: 3}
   m_PrefabInstance: {fileID: 6932154814928090537}
   m_PrefabAsset: {fileID: 0}
