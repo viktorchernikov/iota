@@ -302,13 +302,14 @@ public class Monster : MonoBehaviour
         Player.local.PrepareToDie(eyesPoint.position);
         animator.SetTrigger("IsAttacking");
         Quaternion beginning = transform.rotation;
+        Quaternion destination = Quaternion.LookRotation(GetDirectionToPlayer(transform));
         agent.ResetPath();
         agent.SetDestination(transform.position);
         agent.updateRotation = false;
         float time = 0.0f;
         while (time < 1.5f)
         {
-            transform.rotation = Quaternion.Slerp(beginning, Quaternion.LookRotation(GetDirectionToPlayer(transform)), time / 1.35f);
+            transform.rotation = Quaternion.Slerp(beginning, destination, time / 1.35f);
             time += Time.deltaTime;
             yield return null;
         }

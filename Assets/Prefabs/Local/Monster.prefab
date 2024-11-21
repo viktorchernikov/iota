@@ -53,10 +53,10 @@ MonoBehaviour:
   eyesPoint: {fileID: 624904981046992516}
   patrolMoveSpeed: 2
   patrolRotateSpeed: 120
-  chaseMoveSpeed: 2.65
+  chaseMoveSpeed: 3
   chaseRotateSpeed: 180
   distanceThreshold: 0.5
-  armsReach: 1.5
+  armsReach: 1.75
   maxSeekDistance: 30
   nearbySpotDistance: 5.5
   nearbySpottingFactor: 0.35
