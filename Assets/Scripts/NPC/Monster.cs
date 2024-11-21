@@ -30,6 +30,7 @@ public class Monster : MonoBehaviour
     public float nearbySpottingFactor = 0.5f;
     public float spottingBuildup = 0f;
     public float maxSpottingBuildup = 1f;
+    public float lastKnownToHidingMaxDistance = 5f;
     public AnimationCurve spottingBuildupFactorCurve;
     public Vector3 lastPlayerPosition = Vector3.zero;
     [Header("Patroling")]
@@ -90,7 +91,7 @@ public class Monster : MonoBehaviour
         if (behaviourMode == MonsterBehaviourMode.Chase)
         {
 
-            if (TrySeekPlayer() && GetBuildupFactor() > 0)
+            if ((TrySeekPlayer() && GetBuildupFactor() > 0) || IsHidingNearbyLastKnownPos())
             {
                 if (PlayerWithinReach()) { // + and not in a hiding spot
                     InitPlayerDeath();
@@ -115,6 +116,11 @@ public class Monster : MonoBehaviour
                 }
                 else
                 {
+                    if (PlayerWithinReach())
+                    {
+                        InitPlayerDeath();
+                        return;
+                    }
                     TryFollowLastPlayerPosition();
                 }
             }
@@ -266,6 +272,11 @@ public class Monster : MonoBehaviour
         lastPlayerPosition = GetPlayerPosition();
     }
 
+    private bool IsHidingNearbyLastKnownPos()
+    {
+        return Vector3.Distance(lastPlayerPosition, Player.local.transform.position) < lastKnownToHidingMaxDistance && Player.local.isHiding;
+    }
+
     /// <summary>
     ///  checks if the player is close enough
     ///  </summary>
@@ -291,14 +302,13 @@ public class Monster : MonoBehaviour
         Player.local.PrepareToDie(eyesPoint.position);
         animator.SetTrigger("IsAttacking");
         Quaternion beginning = transform.rotation;
-        Quaternion destination = Quaternion.LookRotation(GetDirectionToPlayer(transform));
         agent.ResetPath();
         agent.SetDestination(transform.position);
         agent.updateRotation = false;
         float time = 0.0f;
         while (time < 1.5f)
         {
-            transform.rotation = Quaternion.Slerp(beginning, destination, time / 1.35f);
+            transform.rotation = Quaternion.Slerp(beginning, Quaternion.LookRotation(GetDirectionToPlayer(transform)), time / 1.35f);
             time += Time.deltaTime;
             yield return null;
         }

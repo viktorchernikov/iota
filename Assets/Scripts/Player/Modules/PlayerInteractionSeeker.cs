@@ -68,6 +68,7 @@ public class PlayerInteractionSeeker : PlayerModule
 
     bool GetInput()
     {
+        if (parent.duringCinematic || !parent.isAlive) return false;
         return Input.GetKeyDown(KeyCode.E);
     }
     bool IsGrounded() => parent.GetModule<PlayerGroundMotor>().grounded;
