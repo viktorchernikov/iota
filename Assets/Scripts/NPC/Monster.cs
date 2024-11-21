@@ -3,6 +3,8 @@ using Unity.Burst;
 using UnityEngine;
 using UnityEngine.AI;
 using System.Linq;
+using System;
+using System.Collections;
 using System.Collections.Generic;
 
 [RequireComponent(typeof(Monster))]
@@ -21,7 +23,6 @@ public class Monster : MonoBehaviour
     public float chaseRotateSpeed = 120f;
     public float distanceThreshold = 0.5f;
     [Header("Interaction")]
-    public Player player;
     public float armsReach = 3.0f;
     [Header("Spotting")]
     public float maxSeekDistance = 30f;
@@ -181,7 +182,10 @@ public class Monster : MonoBehaviour
         RaycastHit hitInfo;
 
         if (!Physics.Raycast(eyesPoint.position, GetDirectionToPlayer(eyesPoint), out hitInfo, maxSeekDistance)) return false;
-        return hitInfo.collider.tag == "Player";
+        if (hitInfo.collider.tag != "Player") return false;
+        if (!Player.local.isAlive) return false;
+
+        return true;
     }
     /// <summary>
     /// Builds up spotted
@@ -248,7 +252,7 @@ public class Monster : MonoBehaviour
     ///  </summary>
     private bool PlayerWithinReach()
     {
-        return (Vector3.Distance(GetPlayerPosition(), eyesPoint.position) < armsReach);
+        return (Vector3.Distance(GetPlayerPosition(), transform.position) < armsReach);
     }
 
     /// <summary>
@@ -256,26 +260,24 @@ public class Monster : MonoBehaviour
     /// </summary>
     private void InitPlayerDeath()
     {
-        if (!player.isDead) {
-            animator.SetTrigger("IsAttacking");
+        if (Player.local.isAlive)
+        {
             behaviourMode = MonsterBehaviourMode.Attacking;
-            agent.isStopped = true;
-            player.Die(transform);
-            //StartCoroutine(AttackCo());
+            StartCoroutine(AttackCo());
         }
-
-        //TODO:
-        //player is dead changes the whole update logic and you olso dont wanna be killed in a closet
     }
 
-    // IEnumerator AttackCo() {
-    //     animator.SetTrigger("IsAttacking");
-    //     behaviourMode = MonsterBehaviourMode.Attacking;
-    //     agent.destination = null;
-    //     yield return player.Die(transform);
-    //     yield return null;
-    //     EndChase(); //no ale itak od razu go znajdzie
-    // }
+    IEnumerator AttackCo()
+    {
+        Player.local.PrepareToDie(eyesPoint.position);
+        animator.SetTrigger("IsAttacking");
+        agent.isStopped = true;
+        // tyle trwa animacja :-)
+        yield return new WaitForSeconds(4.5f);
+        Player.local.Die();
+        agent.isStopped = false;
+        EndChase(); //no ale itak od razu go znajdzie
+    }
     #endregion
 
     #region Helpers
