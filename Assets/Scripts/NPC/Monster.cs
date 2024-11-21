@@ -5,7 +5,6 @@ using UnityEngine.AI;
 using System.Linq;
 using System.Collections.Generic;
 
-
 [RequireComponent(typeof(Monster))]
 public class Monster : MonoBehaviour
 {
@@ -21,6 +20,9 @@ public class Monster : MonoBehaviour
     public float chaseMoveSpeed = 3f;
     public float chaseRotateSpeed = 120f;
     public float distanceThreshold = 0.5f;
+    [Header("Interaction")]
+    public Player player;
+    public float armsReach = 3.0f;
     [Header("Spotting")]
     public float maxSeekDistance = 30f;
     public float spottingBuildup = 0f;
@@ -50,6 +52,7 @@ public class Monster : MonoBehaviour
     #region Logic
     private void FixedUpdate()
     {
+         
         if (behaviourMode == MonsterBehaviourMode.Patrol)
         {
             // Goes to the next patrol point
@@ -84,11 +87,18 @@ public class Monster : MonoBehaviour
         }
         if (behaviourMode == MonsterBehaviourMode.Chase)
         {
+
             if (TrySeekPlayer() && GetBuildupFactor() > 0)
             {
+                if (PlayerWithinReach()) { // + and not in a hiding spot
+                    InitPlayerDeath();
+                } 
+
                 TryBuildupSpotted();
                 RememberPlayerPosition();
+
                 FollowLastPlayerPosition();
+
             }
             else
             {
@@ -155,6 +165,7 @@ public class Monster : MonoBehaviour
     /// <summary>
     /// Tweaks monster's movement on chase end
     /// </summary>
+    
     private void EndChase()
     {
         behaviourMode = MonsterBehaviourMode.Patrol;
@@ -231,6 +242,40 @@ public class Monster : MonoBehaviour
     {
         lastPlayerPosition = GetPlayerPosition();
     }
+
+    /// <summary>
+    ///  checks if the player is close enough
+    ///  </summary>
+    private bool PlayerWithinReach()
+    {
+        return (Vector3.Distance(GetPlayerPosition(), eyesPoint.position) < armsReach);
+    }
+
+    /// <summary>
+    /// tells the player object to go to hell
+    /// </summary>
+    private void InitPlayerDeath()
+    {
+        if (!player.isDead) {
+            animator.SetTrigger("IsAttacking");
+            behaviourMode = MonsterBehaviourMode.Attacking;
+            agent.isStopped = true;
+            player.Die(transform);
+            //StartCoroutine(AttackCo());
+        }
+
+        //TODO:
+        //player is dead changes the whole update logic and you olso dont wanna be killed in a closet
+    }
+
+    // IEnumerator AttackCo() {
+    //     animator.SetTrigger("IsAttacking");
+    //     behaviourMode = MonsterBehaviourMode.Attacking;
+    //     agent.destination = null;
+    //     yield return player.Die(transform);
+    //     yield return null;
+    //     EndChase(); //no ale itak od razu go znajdzie
+    // }
     #endregion
 
     #region Helpers
@@ -310,5 +355,6 @@ public class Monster : MonoBehaviour
 public enum MonsterBehaviourMode
 {
     Patrol,
-    Chase
+    Chase,
+    Attacking
 }
