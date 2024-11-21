@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 6463166720136082643}
   - component: {fileID: 4597358012212469698}
   - component: {fileID: 953241797646457153}
-  - component: {fileID: 4096038884106626628}
+  - component: {fileID: 6989030997812251246}
   m_Layer: 0
   m_Name: Monster
   m_TagString: Untagged
@@ -56,7 +56,10 @@ MonoBehaviour:
   chaseMoveSpeed: 2.65
   chaseRotateSpeed: 180
   distanceThreshold: 0.5
+  armsReach: 2
   maxSeekDistance: 30
+  nearbySpotDistance: 5.5
+  nearbySpottingFactor: 0.35
   spottingBuildup: 0
   maxSpottingBuildup: 1
   spottingBuildupFactorCurve:
@@ -115,7 +118,7 @@ NavMeshAgent:
   m_GameObject: {fileID: 7287571641054498708}
   m_Enabled: 1
   m_AgentTypeID: 0
-  m_Radius: 0.5
+  m_Radius: 1
   m_Speed: 2
   m_Acceleration: 4
   avoidancePriority: 50
@@ -128,7 +131,7 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
---- !u!136 &4096038884106626628
+--- !u!136 &6989030997812251246
 CapsuleCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -147,10 +150,10 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.5
-  m_Height: 1
+  m_Radius: 1.35
+  m_Height: 3
   m_Direction: 1
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Center: {x: 0, y: 1.5, z: 0}
 --- !u!1001 &1018616575925327292
 PrefabInstance:
   m_ObjectHideFlags: 0

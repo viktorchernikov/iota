@@ -26,6 +26,8 @@ public class Monster : MonoBehaviour
     public float armsReach = 3.0f;
     [Header("Spotting")]
     public float maxSeekDistance = 30f;
+    public float nearbySpotDistance = 4f;
+    public float nearbySpottingFactor = 0.5f;
     public float spottingBuildup = 0f;
     public float maxSpottingBuildup = 1f;
     public AnimationCurve spottingBuildupFactorCurve;
@@ -68,14 +70,13 @@ public class Monster : MonoBehaviour
                 if (GetBuildupFactor() > 0)
                 {
                     // On Player Spotted
-                    if (TryBuildupSpotted())
-                    {
-                        RememberPlayerPosition();
-                        FollowLastPlayerPosition();
-                        BeginChase();
-                    }
+                    TryBeginChase();
                 }
                 // Else, cool down the monster
+                else if (AtNearbySpotDistance())
+                {
+                    TryBeginChase(overwrite: true, overwriteValue: nearbySpottingFactor);
+                }
                 else
                 {
                     TryBuilddownSpotted();
@@ -93,12 +94,13 @@ public class Monster : MonoBehaviour
             {
                 if (PlayerWithinReach()) { // + and not in a hiding spot
                     InitPlayerDeath();
+                    return;
                 } 
 
                 TryBuildupSpotted();
                 RememberPlayerPosition();
 
-                FollowLastPlayerPosition();
+                TryFollowLastPlayerPosition();
 
             }
             else
@@ -113,7 +115,7 @@ public class Monster : MonoBehaviour
                 }
                 else
                 {
-                    FollowLastPlayerPosition();
+                    TryFollowLastPlayerPosition();
                 }
             }
         }
@@ -154,6 +156,15 @@ public class Monster : MonoBehaviour
         Vector3 position = GetPatrolPointPos(nextPointId);
         agent.SetDestination(position);
     }
+    public void TryBeginChase(bool overwrite = false, float overwriteValue = 0f)
+    {
+        if (TryBuildupSpotted(overwrite, overwriteValue))
+        {
+            RememberPlayerPosition();
+            BeginChase();
+            TryFollowLastPlayerPosition();
+        }
+    }
     /// <summary>
     /// Tweaks monster's movement on chase begin
     /// </summary>
@@ -191,9 +202,9 @@ public class Monster : MonoBehaviour
     /// Builds up spotted
     /// </summary>
     /// <returns>True if built up, false if not</returns>
-    private bool TryBuildupSpotted()
+    private bool TryBuildupSpotted(bool overwrite = false, float overwriteValue = 0f)
     {
-        spottingBuildup += GetBuildupFactor() * Time.fixedDeltaTime;
+        spottingBuildup += !overwrite ? GetBuildupFactor() : overwriteValue * Time.fixedDeltaTime;
 
         if (spottingBuildup > maxSpottingBuildup)
         {
@@ -235,9 +246,17 @@ public class Monster : MonoBehaviour
     /// <summary>
     /// Sets last known position as destination
     /// </summary>
-    private void FollowLastPlayerPosition()
+    private bool TryFollowLastPlayerPosition()
     {
-        agent.SetDestination(lastPlayerPosition);
+        NavMeshPath path = new NavMeshPath();
+        if (agent.CalculatePath(lastPlayerPosition, path) && path.status == NavMeshPathStatus.PathComplete)
+        {
+            agent.SetDestination(lastPlayerPosition);
+            return true;
+        }
+        EndChase();
+        OnPatrolReturn();
+        return true;
     }
     /// <summary>
     /// Remembers last position of the player that monster saw
@@ -271,12 +290,25 @@ public class Monster : MonoBehaviour
     {
         Player.local.PrepareToDie(eyesPoint.position);
         animator.SetTrigger("IsAttacking");
-        agent.isStopped = true;
-        // tyle trwa animacja :-)
-        yield return new WaitForSeconds(4.5f);
+        Quaternion beginning = transform.rotation;
+        Quaternion destination = Quaternion.LookRotation(GetDirectionToPlayer(transform));
+        agent.ResetPath();
+        agent.SetDestination(transform.position);
+        agent.updateRotation = false;
+        float time = 0.0f;
+        while (time < 1.5f)
+        {
+            transform.rotation = Quaternion.Slerp(beginning, destination, time / 1.35f);
+            time += Time.deltaTime;
+            yield return null;
+        }
         Player.local.Die();
+        yield return new WaitForSeconds(3);
+        agent.updateRotation = true;
+        // tyle trwa animacja :-))
         agent.isStopped = false;
         EndChase(); //no ale itak od razu go znajdzie
+        OnPatrolReturn();
     }
     #endregion
 
@@ -310,6 +342,10 @@ public class Monster : MonoBehaviour
     private bool IsAtPatrolsDeadEnd()
     {
         return IsPointDeadEnd(currentPointId);
+    }
+    public bool AtNearbySpotDistance()
+    {
+        return Vector3.Distance(transform.position, GetPlayerPosition()) < nearbySpotDistance;
     }
     private bool IsPointDeadEnd(int pointId)
     {
