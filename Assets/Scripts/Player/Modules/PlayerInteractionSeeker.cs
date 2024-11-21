@@ -5,6 +5,7 @@ public class PlayerInteractionSeeker : PlayerModule
 {
     #region Events
     public event Action<IInteractable, IInteractable> onHoveredChange;
+    public event Action<GameObject> OnPlayerInteract; 
     #endregion
     #region State
     public IInteractable hoveredObject { get; private set; }
@@ -14,6 +15,7 @@ public class PlayerInteractionSeeker : PlayerModule
     public LayerMask tracedLayers = default(LayerMask);
     #endregion
 
+    GameObject currentHoveredGameObject = null;
     IInteractable _hoveredObject;
     RaycastHit[] hitObjects = new RaycastHit[8];
 
@@ -32,11 +34,11 @@ public class PlayerInteractionSeeker : PlayerModule
             for (int i = 0; i < count; ++i)
             {
                 var obj = hitObjects[i].transform.gameObject;
-
                 IInteractable interObj;
                 if (obj.TryGetComponent(out interObj))
                 {
                     currentHover = interObj;
+                    currentHoveredGameObject = obj;
                     break;
                 }
             }
@@ -48,7 +50,6 @@ public class PlayerInteractionSeeker : PlayerModule
 
         var oldHover = hoveredObject;
         hoveredObject = currentHover;
-        Debug.Log(hoveredObject);
         onHoveredChange?.Invoke(oldHover, currentHover);
     }
     public override void OnUpdate(float deltaTime)
@@ -61,6 +62,7 @@ public class PlayerInteractionSeeker : PlayerModule
         if (hoveredObject.CanInteract(parent) && GetInput())
         {
             hoveredObject.OnInteract(parent);
+            OnPlayerInteract.Invoke(currentHoveredGameObject);
         }
     }
 

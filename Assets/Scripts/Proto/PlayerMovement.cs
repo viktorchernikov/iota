@@ -1,11 +1,13 @@
 using System;
 using UnityEngine;
 
-public class PlayerMovement : MonoBehaviour {
+public class PlayerMovement : MonoBehaviour
+{
 
+    public bool hasKatana = false;
     public bool ninjaMode = false;
 
-    public Animator viewModelAnimator;
+    // public Animator viewModelAnimator;
     public float animationMoveSpeed = 0f;
     public float animationMoveSpeedLerp = 0.125f;
     public GameObject viewModel;
@@ -52,9 +54,15 @@ public class PlayerMovement : MonoBehaviour {
     //Sliding
     private Vector3 normalVector = Vector3.up;
     private Vector3 wallNormalVector;
+    
+    //Interaction
+    private PlayerInteractionSeeker seeker = null;
 
     void Awake() {
         rb = GetComponent<Rigidbody>();
+        seeker = GetComponent<PlayerInteractionSeeker>();
+
+        seeker.OnPlayerInteract += HandleOnPlayerInteract;
     }
     
     void Start() {
@@ -89,7 +97,7 @@ public class PlayerMovement : MonoBehaviour {
         }
         crouching = ninjaMode ? Input.GetKey(KeyCode.LeftControl) : false;
         sprinting = ninjaMode ? Input.GetKey(KeyCode.LeftShift) : false;
-        if (Input.GetKeyDown(KeyCode.Alpha1))
+        if (Input.GetKeyDown(KeyCode.Alpha1) && hasKatana)
         {
             ninjaMode = !ninjaMode;
         }
@@ -106,8 +114,8 @@ public class PlayerMovement : MonoBehaviour {
     }
     private void AnimateViewmodel()
     {
-        animationMoveSpeed = Mathf.Lerp(animationMoveSpeed, rb.velocity.magnitude, animationMoveSpeedLerp * Time.deltaTime);
-        viewModelAnimator.SetFloat("MoveSpeed", animationMoveSpeed);
+        // animationMoveSpeed = Mathf.Lerp(animationMoveSpeed, rb.velocity.magnitude, animationMoveSpeedLerp * Time.deltaTime);
+        // viewModelAnimator.SetFloat("MoveSpeed", animationMoveSpeed);
     }
 
     private void StartCrouch() {
@@ -305,5 +313,9 @@ public class PlayerMovement : MonoBehaviour {
     private void StopGrounded() {
         grounded = false;
     }
-    
+
+    private void HandleOnPlayerInteract(GameObject hower)
+    {
+        if (hower.CompareTag("katana")) hasKatana = true;
+    }
 }

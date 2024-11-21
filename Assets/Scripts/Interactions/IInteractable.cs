@@ -24,5 +24,6 @@ public enum InteractableHoverResponse
     Drop,
     Jumpin,
     Enter,
-    Leave
+    Leave,
+    Take
 }
