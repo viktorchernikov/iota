@@ -3,8 +3,9 @@ using Unity.Burst;
 using UnityEngine;
 using UnityEngine.AI;
 using System.Linq;
+using System;
+using System.Collections;
 using System.Collections.Generic;
-
 
 [RequireComponent(typeof(Monster))]
 public class Monster : MonoBehaviour
@@ -21,10 +22,15 @@ public class Monster : MonoBehaviour
     public float chaseMoveSpeed = 3f;
     public float chaseRotateSpeed = 120f;
     public float distanceThreshold = 0.5f;
+    [Header("Interaction")]
+    public float armsReach = 3.0f;
     [Header("Spotting")]
     public float maxSeekDistance = 30f;
+    public float nearbySpotDistance = 4f;
+    public float nearbySpottingFactor = 0.5f;
     public float spottingBuildup = 0f;
     public float maxSpottingBuildup = 1f;
+    public float lastKnownToHidingMaxDistance = 5f;
     public AnimationCurve spottingBuildupFactorCurve;
     public Vector3 lastPlayerPosition = Vector3.zero;
     [Header("Patroling")]
@@ -50,6 +56,7 @@ public class Monster : MonoBehaviour
     #region Logic
     private void FixedUpdate()
     {
+         
         if (behaviourMode == MonsterBehaviourMode.Patrol)
         {
             // Goes to the next patrol point
@@ -64,14 +71,13 @@ public class Monster : MonoBehaviour
                 if (GetBuildupFactor() > 0)
                 {
                     // On Player Spotted
-                    if (TryBuildupSpotted())
-                    {
-                        RememberPlayerPosition();
-                        FollowLastPlayerPosition();
-                        BeginChase();
-                    }
+                    TryBeginChase();
                 }
                 // Else, cool down the monster
+                else if (AtNearbySpotDistance())
+                {
+                    TryBeginChase(overwrite: true, overwriteValue: nearbySpottingFactor);
+                }
                 else
                 {
                     TryBuilddownSpotted();
@@ -84,11 +90,19 @@ public class Monster : MonoBehaviour
         }
         if (behaviourMode == MonsterBehaviourMode.Chase)
         {
-            if (TrySeekPlayer() && GetBuildupFactor() > 0)
+
+            if ((TrySeekPlayer() && GetBuildupFactor() > 0) || IsHidingNearbyLastKnownPos())
             {
+                if (PlayerWithinReach()) { // + and not in a hiding spot
+                    InitPlayerDeath();
+                    return;
+                } 
+
                 TryBuildupSpotted();
                 RememberPlayerPosition();
-                FollowLastPlayerPosition();
+
+                TryFollowLastPlayerPosition();
+
             }
             else
             {
@@ -102,7 +116,12 @@ public class Monster : MonoBehaviour
                 }
                 else
                 {
-                    FollowLastPlayerPosition();
+                    if (PlayerWithinReach())
+                    {
+                        InitPlayerDeath();
+                        return;
+                    }
+                    TryFollowLastPlayerPosition();
                 }
             }
         }
@@ -143,6 +162,15 @@ public class Monster : MonoBehaviour
         Vector3 position = GetPatrolPointPos(nextPointId);
         agent.SetDestination(position);
     }
+    public void TryBeginChase(bool overwrite = false, float overwriteValue = 0f)
+    {
+        if (TryBuildupSpotted(overwrite, overwriteValue))
+        {
+            RememberPlayerPosition();
+            BeginChase();
+            TryFollowLastPlayerPosition();
+        }
+    }
     /// <summary>
     /// Tweaks monster's movement on chase begin
     /// </summary>
@@ -155,6 +183,7 @@ public class Monster : MonoBehaviour
     /// <summary>
     /// Tweaks monster's movement on chase end
     /// </summary>
+    
     private void EndChase()
     {
         behaviourMode = MonsterBehaviourMode.Patrol;
@@ -170,15 +199,18 @@ public class Monster : MonoBehaviour
         RaycastHit hitInfo;
 
         if (!Physics.Raycast(eyesPoint.position, GetDirectionToPlayer(eyesPoint), out hitInfo, maxSeekDistance)) return false;
-        return hitInfo.collider.tag == "Player";
+        if (hitInfo.collider.tag != "Player") return false;
+        if (!Player.local.isAlive) return false;
+
+        return true;
     }
     /// <summary>
     /// Builds up spotted
     /// </summary>
     /// <returns>True if built up, false if not</returns>
-    private bool TryBuildupSpotted()
+    private bool TryBuildupSpotted(bool overwrite = false, float overwriteValue = 0f)
     {
-        spottingBuildup += GetBuildupFactor() * Time.fixedDeltaTime;
+        spottingBuildup += !overwrite ? GetBuildupFactor() : overwriteValue * Time.fixedDeltaTime;
 
         if (spottingBuildup > maxSpottingBuildup)
         {
@@ -220,9 +252,17 @@ public class Monster : MonoBehaviour
     /// <summary>
     /// Sets last known position as destination
     /// </summary>
-    private void FollowLastPlayerPosition()
+    private bool TryFollowLastPlayerPosition()
     {
-        agent.SetDestination(lastPlayerPosition);
+        NavMeshPath path = new NavMeshPath();
+        if (agent.CalculatePath(lastPlayerPosition, path) && path.status == NavMeshPathStatus.PathComplete)
+        {
+            agent.SetDestination(lastPlayerPosition);
+            return true;
+        }
+        EndChase();
+        OnPatrolReturn();
+        return true;
     }
     /// <summary>
     /// Remembers last position of the player that monster saw
@@ -230,6 +270,55 @@ public class Monster : MonoBehaviour
     private void RememberPlayerPosition()
     {
         lastPlayerPosition = GetPlayerPosition();
+    }
+
+    private bool IsHidingNearbyLastKnownPos()
+    {
+        return Vector3.Distance(lastPlayerPosition, Player.local.transform.position) < lastKnownToHidingMaxDistance && Player.local.isHiding;
+    }
+
+    /// <summary>
+    ///  checks if the player is close enough
+    ///  </summary>
+    private bool PlayerWithinReach()
+    {
+        return (Vector3.Distance(GetPlayerPosition(), transform.position) < armsReach);
+    }
+
+    /// <summary>
+    /// tells the player object to go to hell
+    /// </summary>
+    private void InitPlayerDeath()
+    {
+        if (Player.local.isAlive)
+        {
+            behaviourMode = MonsterBehaviourMode.Attacking;
+            StartCoroutine(AttackCo());
+        }
+    }
+
+    IEnumerator AttackCo()
+    {
+        Player.local.PrepareToDie(eyesPoint.position);
+        animator.SetTrigger("IsAttacking");
+        Quaternion beginning = transform.rotation;
+        agent.ResetPath();
+        agent.SetDestination(transform.position);
+        agent.updateRotation = false;
+        float time = 0.0f;
+        while (time < 1.5f)
+        {
+            transform.rotation = Quaternion.Slerp(beginning, Quaternion.LookRotation(GetDirectionToPlayer(transform)), time / 1.35f);
+            time += Time.deltaTime;
+            yield return null;
+        }
+        Player.local.Die();
+        yield return new WaitForSeconds(3);
+        agent.updateRotation = true;
+        // tyle trwa animacja :-))
+        agent.isStopped = false;
+        EndChase(); //no ale itak od razu go znajdzie
+        OnPatrolReturn();
     }
     #endregion
 
@@ -263,6 +352,10 @@ public class Monster : MonoBehaviour
     private bool IsAtPatrolsDeadEnd()
     {
         return IsPointDeadEnd(currentPointId);
+    }
+    public bool AtNearbySpotDistance()
+    {
+        return Vector3.Distance(transform.position, GetPlayerPosition()) < nearbySpotDistance;
     }
     private bool IsPointDeadEnd(int pointId)
     {
@@ -310,5 +403,6 @@ public class Monster : MonoBehaviour
 public enum MonsterBehaviourMode
 {
     Patrol,
-    Chase
+    Chase,
+    Attacking
 }

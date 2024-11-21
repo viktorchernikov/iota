@@ -10,6 +10,7 @@ public sealed class Player : MonoBehaviour, IInteractor
     [Header("OnStart")]
     public float initialScale = 1f;
     #region State
+    public bool isAlive { get; private set; } = true;
     public bool duringCinematic { get; private set; } = false;
     public bool isHiding { get; private set; }
     public HidingSpot hidingSpot { get; private set; }
@@ -83,7 +84,20 @@ public sealed class Player : MonoBehaviour, IInteractor
     public event Action<InteractionContext> onInteract;
     public event Action<float, float, PlayerDimensions, PlayerDimensions> onScaleChange;
 
-    
+
+    public void PrepareToDie(Vector3 focusPoint)
+    {
+        duringCinematic = true;
+    }
+    public void Die()
+    {
+        // Step 1.
+        // Step 2.
+        // :cry:
+        isAlive = false;
+        // Step 3.
+        // *revive*
+    }
     public void Teleport(Transform transform)
     {
         Teleport(transform.position);
