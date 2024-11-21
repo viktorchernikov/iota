@@ -12,9 +12,8 @@ public class MouseClickCut : MonoBehaviour
 		
     private void Update()
     {
-	    Debug.Log(_playerKatana);
-	    if (_playerKatana.KatanaState != PlayerKatanaState.Holding) return;
 	    if (!Input.GetMouseButtonDown(0)) return;
+	    if (_playerKatana.State != PlayerKatanaState.Holding) return;
 	    if (!Camera.main) throw new Exception("No main camera found");
 	    if (!Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out var hit, 4f)) return;
 	    
@@ -22,7 +21,6 @@ public class MouseClickCut : MonoBehaviour
 
 	    if (!victim.CompareTag("Cuttable")) return;
 	    
-	    Debug.Log("Cut");
 		Cutter.Cut(victim, hit.point, Camera.main.transform.right);
     }
 }

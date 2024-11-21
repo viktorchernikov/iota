@@ -49,7 +49,6 @@ public class PlayerInteractionSeeker : PlayerModule
 
         var oldHover = hoveredObject;
         hoveredObject = currentHover;
-        Debug.Log(hoveredObject);
         onHoveredChange?.Invoke(oldHover, currentHover);
     }
     public override void OnUpdate(float deltaTime)

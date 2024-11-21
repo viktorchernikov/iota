@@ -1,15 +1,17 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class PlayerKatana : MonoBehaviour
 {
     [SerializeField] private GameObject _katanaModel;
-    [SerializeField] private PlayerKatanaState _katanaState = PlayerKatanaState.Absent;
+    [SerializeField] private PlayerKatanaState _state = PlayerKatanaState.Absent;
     // TODO: maybe better to make separate component for player input
     [SerializeField] private KeyCode _keyToHoldKatana = KeyCode.Alpha1;
     
     public event Action<PlayerKatanaState, PlayerKatanaState> OnKatanaStateChanged;
-    public PlayerKatanaState KatanaState => _katanaState;
+    public PlayerKatanaState State => _state;
 
     private PlayerInteractionSeeker _seeker;
 
@@ -22,11 +24,9 @@ public class PlayerKatana : MonoBehaviour
 
     private void PlayerInteractHandler(GameObject obj)
     {
-        if (!obj.CompareTag("katana") || _katanaState != PlayerKatanaState.Absent) return;
-        
-        var oldState = _katanaState;
-        _katanaState = PlayerKatanaState.Hided;
-        OnKatanaStateChanged?.Invoke(oldState, _katanaState);
+        if (!obj.CompareTag("katana") || _state != PlayerKatanaState.Absent) return;
+
+        HoldKatana();
     }
 
     private void Update()
@@ -36,30 +36,33 @@ public class PlayerKatana : MonoBehaviour
 
     private void PlayerInputPulse()
     {
-        if (KatanaState == PlayerKatanaState.Absent) return;
+        if (State == PlayerKatanaState.Absent) return;
         if (!Input.GetKeyDown(_keyToHoldKatana)) return;
-
-        _katanaState = _katanaState switch
-        {
-            PlayerKatanaState.Hided => HoldKatana(),
-            PlayerKatanaState.Holding => HideKatana(),
-            _ => throw new NotImplementedException("Katana state not implemented.")
+        
+        var handlerToOldState = new Dictionary<PlayerKatanaState,Action>() 
+        { 
+            { PlayerKatanaState.Hided, HoldKatana },
+            { PlayerKatanaState.Holding, HideKatana},
+            { PlayerKatanaState.Absent, () => throw new NotImplementedException("Katana state not implemented.")}
         };
+
+        handlerToOldState[_state]();
     }
     
-    private PlayerKatanaState HoldKatana() {
+    private void HoldKatana() 
+    {
         _katanaModel.SetActive(true);
         var newState = PlayerKatanaState.Holding;
-        OnKatanaStateChanged?.Invoke(PlayerKatanaState.Hided, newState);
-        return newState;
+        OnKatanaStateChanged?.Invoke(_state, newState);
+        _state = newState;
     }
 
-    private PlayerKatanaState HideKatana()
+    private void HideKatana()
     {
         _katanaModel.SetActive(false);
         var newState = PlayerKatanaState.Hided;
-        OnKatanaStateChanged?.Invoke(PlayerKatanaState.Holding, newState);
-        return newState;
+        OnKatanaStateChanged?.Invoke(_state, newState);
+        _state = newState;
     }
 }
 
