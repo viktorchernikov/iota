@@ -13,7 +13,6 @@ public class PlayerKatana : MonoBehaviour
     [SerializeField] private PlayerKatanaState _state = PlayerKatanaState.Absent;
     // TODO: maybe better to make separate component for player input
     [SerializeField] private KeyCode _keyToHoldKatana = KeyCode.Alpha1;
-    [SerializeField] private KeyCode fireKey = KeyCode.Mouse0;
 
     public event Action<PlayerKatanaState, PlayerKatanaState> OnKatanaStateChanged;
     public PlayerKatanaState State => _state;
@@ -39,6 +38,7 @@ public class PlayerKatana : MonoBehaviour
     private void Update()
     {  
         PlayerInputPulse();
+        TryAttack();
     }
 
     private void PlayerInputPulse()
@@ -55,16 +55,15 @@ public class PlayerKatana : MonoBehaviour
 
         handlerToOldState[_state]();
     }
-    private void GetFireInput()
+    private void TryAttack()
     {
         if (isCooldowned) return;
-        if (!Input.GetKeyDown(fireKey)) return;
+        if (!Input.GetMouseButtonDown(0)) return;
 
-        StartCoroutine(Fire());
+        StartCoroutine(AttackSequence());
     }
-    private IEnumerator Fire()
+    private IEnumerator AttackSequence()
     {
-        isCooldowned = true;
 
         if (!Camera.main) throw new Exception("No main camera found");
         if (!Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out var hit, 4f)) yield break;
@@ -73,9 +72,11 @@ public class PlayerKatana : MonoBehaviour
 
         if (!victim.CompareTag("Cuttable")) yield break;
 
-        Cutter.Cut(victim, hit.point, Camera.main.transform.right);
+        isCooldowned = true;
 
+        Cutter.Cut(victim, hit.point, Camera.main.transform.right);
         yield return new WaitForSeconds(attackDelay);
+
         isCooldowned = false;
     }
     
