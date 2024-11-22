@@ -10,18 +10,18 @@ public class MeshTriangle
     public List<Vector2> UVs { get; set; } = new();
     public int SubmeshIndex { get => submeshIndex; private set => SubmeshIndex = value; }
 
-    public MeshTriangle(Vector3[] _vertices, Vector3[] _normals, Vector2[] _uvs, int _submeshIndex) 
+    public MeshTriangle() { }
+    public void Set(Vector3[] vertices, Vector3[] normals, Vector2[] uvs, int submeshIndex)
     {
         Clear();
+        Vertices.AddRange(vertices);
+        Normals.AddRange(normals);
+        UVs.AddRange(uvs);
 
-        Vertices.AddRange(_vertices);
-        Normals.AddRange(_normals);
-        UVs.AddRange(_uvs);
-
-        submeshIndex = _submeshIndex;
+        this.submeshIndex = submeshIndex;
     }
 
-    private void Clear()
+    public void Clear()
     {
         Vertices.Clear();
         Normals.Clear();

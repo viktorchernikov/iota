@@ -1,10 +1,27 @@
-﻿using System.Collections.Generic;
+﻿using System.Buffers;
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Pool;
 
 public class Cutter : MonoBehaviour
 {
     private static bool isBusy;
     private static Mesh originalMesh;
+
+    private static ObjectPool<MeshTriangle> meshTrianglePool = new ObjectPool<MeshTriangle>
+        (
+            createFunc: () =>
+            {
+                return new MeshTriangle();
+            },
+            actionOnRelease: (MeshTriangle triangle) =>
+            {
+                triangle.Clear();
+            },
+            defaultCapacity: 8,
+            maxSize: 64
+        );
+
 
     public static void Cut(GameObject originalGameObject, Vector3 contactPoint, Vector3 cutNormal)
     {
@@ -128,6 +145,7 @@ public class Cutter : MonoBehaviour
                         CutTriangle(plane,currentTriangle, triangleALeftSide, triangleBLeftSide, triangleCLeftSide,leftMesh,rightMesh,addedVertices);
                         break;
                 }
+                meshTrianglePool.Release(currentTriangle);
             }
         }
     }
@@ -163,7 +181,10 @@ public class Cutter : MonoBehaviour
             originalMesh.uv[_triangleIndexC]
         };
 
-        return new MeshTriangle(verticesToAdd, normalsToAdd, uvsToAdd, _submeshIndex);
+        var triangle = meshTrianglePool.Get();
+        triangle.Set(verticesToAdd, normalsToAdd, uvsToAdd, _submeshIndex);
+
+        return triangle;
     }
 
     /// <summary>
@@ -186,8 +207,17 @@ public class Cutter : MonoBehaviour
         leftSide.Add(triangleBLeftSide);
         leftSide.Add(triangleCLeftSide);
 
-        MeshTriangle leftMeshTriangle = new MeshTriangle(new Vector3[2],new Vector3[2],new Vector2[2],triangle.SubmeshIndex);
-        MeshTriangle rightMeshTriangle = new MeshTriangle(new Vector3[2], new Vector3[2], new Vector2[2], triangle.SubmeshIndex);
+        MeshTriangle leftMeshTriangle = meshTrianglePool.Get();
+        MeshTriangle rightMeshTriangle = meshTrianglePool.Get();
+
+        var emptyV3 = ArrayPool<Vector3>.Shared.Rent(2);
+        var emptyV2 = ArrayPool<Vector2>.Shared.Rent(2);
+
+        leftMeshTriangle.Set(emptyV3, emptyV3, emptyV2, triangle.SubmeshIndex);
+        rightMeshTriangle.Set(emptyV3, emptyV3, emptyV2, triangle.SubmeshIndex);
+
+        ArrayPool<Vector3>.Shared.Return(emptyV3);
+        ArrayPool<Vector2>.Shared.Return(emptyV2);
 
         bool left = false;
         bool right = false;
@@ -262,12 +292,22 @@ public class Cutter : MonoBehaviour
         Vector2 uvRight = Vector2.Lerp(leftMeshTriangle.UVs[1], rightMeshTriangle.UVs[1], normalizedDistance);
 
         //TESTING OUR FIRST TRIANGLE
-        MeshTriangle currentTriangle;
-        Vector3[] updatedVertices = { leftMeshTriangle.Vertices[0], vertLeft, vertRight };
-        Vector3[] updatedNormals = { leftMeshTriangle.Normals[0], normalLeft, normalRight };
-        Vector2[] updatedUVs = { leftMeshTriangle.UVs[0], uvLeft, uvRight };
-        
-       currentTriangle = new MeshTriangle(updatedVertices, updatedNormals, updatedUVs, triangle.SubmeshIndex);
+        MeshTriangle currentTriangle = meshTrianglePool.Get();
+        Vector3[] updatedVertices = ArrayPool<Vector3>.Shared.Rent(3);
+        Vector3[] updatedNormals = ArrayPool<Vector3>.Shared.Rent(3);
+        Vector2[] updatedUVs = ArrayPool<Vector2>.Shared.Rent(3);
+
+        updatedVertices[0] = leftMeshTriangle.Vertices[0];
+        updatedVertices[1] = vertLeft;
+        updatedVertices[2] = vertRight;
+        updatedNormals[0] = leftMeshTriangle.Normals[0];
+        updatedNormals[1] = normalLeft;
+        updatedNormals[2] = normalRight;
+        updatedUVs[0] = leftMeshTriangle.UVs[0];
+        updatedUVs[1] = uvLeft;
+        updatedUVs[2] = uvRight;
+
+        currentTriangle.Set(updatedVertices, updatedNormals, updatedUVs, triangle.SubmeshIndex);
 
         //If our vertices ant the same
         if(updatedVertices[0] != updatedVertices[1] && updatedVertices[0] != updatedVertices[2])
@@ -280,14 +320,21 @@ public class Cutter : MonoBehaviour
         }
 
         //SECOND TRIANGLE 
-        updatedVertices = new Vector3[] { leftMeshTriangle.Vertices[0], leftMeshTriangle.Vertices[1], vertRight };
-        updatedNormals = new Vector3[] { leftMeshTriangle.Normals[0], leftMeshTriangle.Normals[1], normalRight };
-        updatedUVs = new Vector2[] { leftMeshTriangle.UVs[0],leftMeshTriangle.UVs[1], uvRight };
+        updatedVertices[0] = leftMeshTriangle.Vertices[0];
+        updatedVertices[1] = leftMeshTriangle.Vertices[1];
+        updatedVertices[2] = vertRight;
+        updatedNormals[0] = leftMeshTriangle.Normals[0];
+        updatedNormals[1] = leftMeshTriangle.Normals[1];
+        updatedNormals[2] = normalRight;
+        updatedUVs[0] = leftMeshTriangle.UVs[0];
+        updatedUVs[1] = leftMeshTriangle.UVs[1];
+        updatedUVs[2] = uvRight;
 
 
-        currentTriangle = new MeshTriangle(updatedVertices, updatedNormals, updatedUVs, triangle.SubmeshIndex);
+        currentTriangle.Clear();
+        currentTriangle.Set(updatedVertices, updatedNormals, updatedUVs, triangle.SubmeshIndex);
         //If our vertices arent the same
-        if(updatedVertices[0] != updatedVertices[1] && updatedVertices[0] != updatedVertices[2])
+        if (updatedVertices[0] != updatedVertices[1] && updatedVertices[0] != updatedVertices[2])
         {
             if(Vector3.Dot(Vector3.Cross(updatedVertices[1] - updatedVertices[0],updatedVertices[2] - updatedVertices[0]),updatedNormals[0]) < 0) 
             {
@@ -297,13 +344,20 @@ public class Cutter : MonoBehaviour
         }
 
         //THIRD TRIANGLE 
-        updatedVertices = new Vector3[] { rightMeshTriangle.Vertices[0], vertLeft, vertRight };
-        updatedNormals = new Vector3[] { rightMeshTriangle.Normals[0], normalLeft, normalRight };
-        updatedUVs = new Vector2[] { rightMeshTriangle.UVs[0],uvLeft, uvRight };
+        updatedVertices[0] = rightMeshTriangle.Vertices[0];
+        updatedVertices[1] = vertLeft;
+        updatedVertices[2] = vertRight;
+        updatedNormals[0] = rightMeshTriangle.Normals[0];
+        updatedNormals[1] = normalRight;
+        updatedNormals[2] = normalRight;
+        updatedUVs[0] = rightMeshTriangle.UVs[0];
+        updatedUVs[1] = uvLeft;
+        updatedUVs[2] = uvRight;
 
-        currentTriangle = new MeshTriangle(updatedVertices, updatedNormals, updatedUVs, triangle.SubmeshIndex);
+        currentTriangle.Clear();
+        currentTriangle.Set(updatedVertices, updatedNormals, updatedUVs, triangle.SubmeshIndex);
         //If our vertices arent the same
-        if(updatedVertices[0] != updatedVertices[1] && updatedVertices[0] != updatedVertices[2])
+        if (updatedVertices[0] != updatedVertices[1] && updatedVertices[0] != updatedVertices[2])
         {
             if(Vector3.Dot(Vector3.Cross(updatedVertices[1] - updatedVertices[0],updatedVertices[2] - updatedVertices[0]),updatedNormals[0]) < 0) 
             {
@@ -313,13 +367,20 @@ public class Cutter : MonoBehaviour
         }
 
         //FOURTH TRIANGLE 
-        updatedVertices = new Vector3[] { rightMeshTriangle.Vertices[0], rightMeshTriangle.Vertices[1], vertRight };
-        updatedNormals = new Vector3[] { rightMeshTriangle.Normals[0], rightMeshTriangle.Normals[1], normalRight };
-        updatedUVs = new Vector2[] { rightMeshTriangle.UVs[0],rightMeshTriangle.UVs[1], uvRight };
+        updatedVertices[0] = rightMeshTriangle.Vertices[0];
+        updatedVertices[1] = rightMeshTriangle.Vertices[1];
+        updatedVertices[2] = vertRight;
+        updatedNormals[0] = rightMeshTriangle.Normals[0];
+        updatedNormals[1] = rightMeshTriangle.Normals[1];
+        updatedNormals[2] = normalRight;
+        updatedUVs[0] = rightMeshTriangle.UVs[0];
+        updatedUVs[1] = rightMeshTriangle.UVs[1];
+        updatedUVs[2] = uvRight;
 
-        currentTriangle = new MeshTriangle(updatedVertices, updatedNormals, updatedUVs, triangle.SubmeshIndex);
+        currentTriangle.Clear();
+        currentTriangle.Set(updatedVertices, updatedNormals, updatedUVs, triangle.SubmeshIndex);
         //If our vertices arent the same
-        if(updatedVertices[0] != updatedVertices[1] && updatedVertices[0] != updatedVertices[2])
+        if (updatedVertices[0] != updatedVertices[1] && updatedVertices[0] != updatedVertices[2])
         {
             if(Vector3.Dot(Vector3.Cross(updatedVertices[1] - updatedVertices[0],updatedVertices[2] - updatedVertices[0]),updatedNormals[0]) < 0) 
             {
@@ -327,6 +388,13 @@ public class Cutter : MonoBehaviour
             }
             rightMesh.AddTriangle(currentTriangle);
         }
+
+        meshTrianglePool.Release(currentTriangle);
+        meshTrianglePool.Release(leftMeshTriangle);
+        meshTrianglePool.Release(rightMeshTriangle);
+        ArrayPool<Vector3>.Shared.Return(updatedVertices);
+        ArrayPool<Vector3>.Shared.Return(updatedNormals);
+        ArrayPool<Vector2>.Shared.Return(updatedUVs);
     }
 
     private static void FlipTriangel(MeshTriangle _triangle)
@@ -412,6 +480,14 @@ public class Cutter : MonoBehaviour
         Vector2 uv1 = Vector2.zero;
         Vector2 uv2 = Vector2.zero;
 
+        Vector3[] vertices = ArrayPool<Vector3>.Shared.Rent(3);
+        Vector3[] normals = ArrayPool<Vector3>.Shared.Rent(3);
+        Vector2[] uvs = ArrayPool<Vector2>.Shared.Rent(3);
+
+        ArrayPool<Vector3>.Shared.Return(vertices);
+        ArrayPool<Vector3>.Shared.Return(normals);
+        ArrayPool<Vector2>.Shared.Return(uvs);
+
         for (int i = 0; i < _vertices.Count; i++)
         {
             displacement = _vertices[i] - centerPosition;
@@ -428,11 +504,19 @@ public class Cutter : MonoBehaviour
                 y = .5f + Vector3.Dot(displacement, up)
             };
 
-            Vector3[] vertices = {_vertices[i], _vertices[(i+1) % _vertices.Count], centerPosition};
-			Vector3[] normals = {-_plane.normal, -_plane.normal, -_plane.normal};
-			Vector2[] uvs   = {uv1, uv2, new(0.5f, 0.5f)};
+            vertices[0] = _vertices[i];
+            vertices[1] = _vertices[(i + 1) % _vertices.Count];
+            vertices[2] = centerPosition;
 
-            MeshTriangle currentTriangle = new MeshTriangle(vertices, normals, uvs, originalMesh.subMeshCount + 1);
+            normals[0] = -_plane.normal;
+            normals[1] = -_plane.normal;
+            normals[2] = -_plane.normal;
+            uvs[0] = uv1;
+            uvs[1] = uv2;
+            uvs[2] = new(0.5f, 0.5f);
+
+            MeshTriangle currentTriangle = meshTrianglePool.Get();
+            currentTriangle.Set(vertices, normals, uvs, originalMesh.subMeshCount + 1);
 
             if(Vector3.Dot(Vector3.Cross(vertices[1] - vertices[0],vertices[2] - vertices[0]),normals[0]) < 0)
             {
@@ -440,14 +524,17 @@ public class Cutter : MonoBehaviour
             }
             _leftMesh.AddTriangle(currentTriangle);
 
-            normals = new[] { _plane.normal, _plane.normal, _plane.normal };
-            currentTriangle = new MeshTriangle(vertices, normals, uvs, originalMesh.subMeshCount + 1);
+            normals[0] = -_plane.normal;
+            normals[1] = -_plane.normal;
+            normals[2] = -_plane.normal;
+            currentTriangle.Set(vertices, normals, uvs, originalMesh.subMeshCount + 1);
 
             if(Vector3.Dot(Vector3.Cross(vertices[1] - vertices[0],vertices[2] - vertices[0]),normals[0]) < 0)
             {
                 FlipTriangel(currentTriangle);
             }
             _rightMesh.AddTriangle(currentTriangle);
+            meshTrianglePool.Release(currentTriangle);
         
         } 
     }
