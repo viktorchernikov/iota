@@ -160,30 +160,16 @@ public class Cutter : MonoBehaviour
     /// <returns></returns>
     private static MeshTriangle GetTriangle(int _triangleIndexA, int _triangleIndexB, int _triangleIndexC, int _submeshIndex)
     {
-        //Adding the Vertices at the triangleIndex
-        Vector3[] verticesToAdd = {
-            originalMesh.vertices[_triangleIndexA],
-            originalMesh.vertices[_triangleIndexB],
-            originalMesh.vertices[_triangleIndexC]
-        };
-
-        //Adding the normals at the triangle index
-        Vector3[] normalsToAdd = {
-            originalMesh.normals[_triangleIndexA],
-            originalMesh.normals[_triangleIndexB],
-            originalMesh.normals[_triangleIndexC]
-        };
-
-        //adding the uvs at the triangleIndex
-        Vector2[] uvsToAdd = {
-            originalMesh.uv[_triangleIndexA],
-            originalMesh.uv[_triangleIndexB],
-            originalMesh.uv[_triangleIndexC]
-        };
-
         var triangle = meshTrianglePool.Get();
-        triangle.Set(verticesToAdd, normalsToAdd, uvsToAdd, _submeshIndex);
-
+        triangle.Vertices.Add(originalMesh.vertices[_triangleIndexA]);
+        triangle.Vertices.Add(originalMesh.vertices[_triangleIndexB]);
+        triangle.Vertices.Add(originalMesh.vertices[_triangleIndexC]);
+        triangle.Normals.Add(originalMesh.normals[_triangleIndexA]);
+        triangle.Normals.Add(originalMesh.normals[_triangleIndexB]);
+        triangle.Normals.Add(originalMesh.normals[_triangleIndexC]);
+        triangle.UVs.Add(originalMesh.uv[_triangleIndexA]);
+        triangle.UVs.Add(originalMesh.uv[_triangleIndexB]);
+        triangle.UVs.Add(originalMesh.uv[_triangleIndexC]);
         return triangle;
     }
 
