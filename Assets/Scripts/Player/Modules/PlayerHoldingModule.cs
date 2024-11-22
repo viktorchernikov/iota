@@ -54,6 +54,12 @@ public class PlayerHoldingModule : PlayerModule
         currentlyHolding = null;
     }
 
+    public void DeleteHoldingObject()
+    {
+        currentlyHolding.self.gameObject.SetActive(false);
+        currentlyHolding = null;
+    }
+
     private void PlayerPickObjectHandler(GameObject interactable)
     {
         if (!interactable.TryGetComponent<IPickupable>(out var pickupable)) return;

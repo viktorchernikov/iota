@@ -26,24 +26,29 @@ public class PlayerInteractionSeeker : PlayerModule
         if (!Physics.Raycast(parent.usedCamera.forwardRay, out var hit, maxSeekDistance * parent.currentScale,
                 tracedLayers.value))
         {
-            _hoveredObject = null;
+            EndHoveringOnHover();
             return;
         }
         var obj = hit.collider.gameObject;
-
+        
         if (!obj.TryGetComponent(out IInteractable interactable))
         {
-            _hoveredObject = null;
+            EndHoveringOnHover();
             return;
         }
 
-
         if (interactable == _hoveredObject) return;
+        
+        EndHoveringOnHover();
         
         _currentHoveredGameObject = obj;
 
         var oldHover = _hoveredObject;
         _hoveredObject = interactable;
+        
+        if (obj.TryGetComponent<IHoverListener>(out var newHoverListener))
+            newHoverListener.OnHoverStart(this.gameObject);
+        
         OnHoveredChange?.Invoke(oldHover, interactable);
     }
     
@@ -62,5 +67,13 @@ public class PlayerInteractionSeeker : PlayerModule
     {
         return Input.GetKeyDown(KeyCode.E);
     }
-   
+
+    private void EndHoveringOnHover()
+    {
+        if (_currentHoveredGameObject is not null && _currentHoveredGameObject.TryGetComponent<IHoverListener>(out var oldHoverListener))
+            oldHoverListener.OnHoverEnd(this.gameObject);
+            
+        _hoveredObject = null;
+        _currentHoveredGameObject = null;
+    }
 }

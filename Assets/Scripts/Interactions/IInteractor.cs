@@ -8,7 +8,7 @@ public interface IInteractor
     /// </summary>
     public event Action<InteractionContext> onInteract;
 
-
+    public Transform self { get; }
     /// <summary>
     /// Tells if interactor can interact
     /// </summary>
