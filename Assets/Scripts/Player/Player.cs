@@ -88,6 +88,15 @@ public sealed class Player : MonoBehaviour, IInteractor
     public void PrepareToDie(Vector3 focusPoint)
     {
         duringCinematic = true;
+
+      StartCoroutine(PrepareToDieCo(focusPoint));
+    }
+
+    IEnumerator PrepareToDieCo(Vector3 focusPoint) {
+        Vector3 direction = focusPoint - usedCamera.position;
+        Vector3 eulerKiller = Quaternion.LookRotation(direction).eulerAngles;
+        yield return GetModule<PlayerCinematicController>().AdjustCameraPositionAndViewAngles(usedCamera.position, eulerKiller, 3, 180);
+        yield return null;
     }
     public void Die()
     {
