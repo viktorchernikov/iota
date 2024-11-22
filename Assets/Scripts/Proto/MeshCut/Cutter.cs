@@ -7,6 +7,9 @@ public class Cutter : MonoBehaviour
 {
     private static bool isBusy;
     private static Mesh originalMesh;
+    private static Vector3[] originalMeshVertices;
+    private static Vector3[] originalMeshNormals;
+    private static Vector2[] originalMeshUv;
 
     private static ObjectPool<MeshTriangle> meshTrianglePool = new ObjectPool<MeshTriangle>
         (
@@ -35,6 +38,9 @@ public class Cutter : MonoBehaviour
         
         Plane cutPlane = new Plane(originalGameObject.transform.InverseTransformDirection(-cutNormal), originalGameObject.transform.InverseTransformPoint(contactPoint));
         originalMesh = originalGameObject.GetComponent<MeshFilter>().mesh;
+        originalMeshVertices = originalMesh.vertices;
+        originalMeshNormals = originalMesh.normals;
+        originalMeshUv = originalMesh.uv;
 
         if (originalMesh == null)
         {
@@ -126,9 +132,9 @@ public class Cutter : MonoBehaviour
 
                 //We are now using the plane.getside function to see on which side of the cut our trianle is situated 
                 //or if it might be cut through
-                bool triangleALeftSide = plane.GetSide(originalMesh.vertices[triangleIndexA]);
-                bool triangleBLeftSide = plane.GetSide(originalMesh.vertices[triangleIndexB]);
-                bool triangleCLeftSide = plane.GetSide(originalMesh.vertices[triangleIndexC]);
+                bool triangleALeftSide = plane.GetSide(originalMeshVertices[triangleIndexA]);
+                bool triangleBLeftSide = plane.GetSide(originalMeshVertices[triangleIndexB]);
+                bool triangleCLeftSide = plane.GetSide(originalMeshVertices[triangleIndexC]);
 
                 switch (triangleALeftSide)
                 {
