@@ -3,72 +3,64 @@ using UnityEngine;
 
 public class PlayerInteractionSeeker : PlayerModule
 {
-    #region Events
-    public event Action<IInteractable, IInteractable> onHoveredChange;
+    [SerializeField] private float maxSeekDistance = 3f;
+    [SerializeField] private LayerMask tracedLayers = default(LayerMask);
+    
+    public event Action<IInteractable, IInteractable> OnHoveredChange;
     public event Action<GameObject> OnPlayerInteract; 
-    #endregion
-    #region State
-    public IInteractable hoveredObject { get; private set; }
-    #endregion
-    #region Parameters
-    public float maxSeekDistance = 3f;
-    public LayerMask tracedLayers = default(LayerMask);
-    #endregion
+    public IInteractable HoveredObject { get => _hoveredObject; }
+    
+    private GameObject _currentHoveredGameObject;
+    private IInteractable _hoveredObject;
+    private PlayerGroundMotor _groundMotor;
 
-    GameObject currentHoveredGameObject = null;
-    IInteractable _hoveredObject;
-    RaycastHit[] hitObjects = new RaycastHit[8];
-
-
+    public void Awake()
+    {
+        _groundMotor = GetComponent<PlayerGroundMotor>();
+    }
+    
     public override void OnFixedUpdate(float deltaTime)
     {
         base.OnFixedUpdate(deltaTime);
-
-        IInteractable currentHover = null;
-        int count = Physics.RaycastNonAlloc(parent.usedCamera.forwardRay, hitObjects, maxSeekDistance * parent.currentScale, tracedLayers.value);
-
-        if (count != 0)
+        
+        if (!Physics.Raycast(parent.usedCamera.forwardRay, out var hit, maxSeekDistance * parent.currentScale,
+                tracedLayers.value))
         {
-            Array.Sort(hitObjects, (a, b) => (b.distance.CompareTo(a.distance)));
+            _hoveredObject = null;
+            return;
+        }
+        var obj = hit.collider.gameObject;
 
-            for (int i = 0; i < count; ++i)
-            {
-                var obj = hitObjects[i].transform.gameObject;
-                IInteractable interObj;
-                if (obj.TryGetComponent(out interObj))
-                {
-                    currentHover = interObj;
-                    currentHoveredGameObject = obj;
-                    break;
-                }
-            }
+        if (!obj.TryGetComponent(out IInteractable interactable))
+        {
+            _hoveredObject = null;
+            return;
         }
 
 
-        if (currentHover == hoveredObject)
-            return;
+        if (interactable == _hoveredObject) return;
+        
+        _currentHoveredGameObject = obj;
 
-        var oldHover = hoveredObject;
-        hoveredObject = currentHover;
-        onHoveredChange?.Invoke(oldHover, currentHover);
+        var oldHover = _hoveredObject;
+        _hoveredObject = interactable;
+        OnHoveredChange?.Invoke(oldHover, interactable);
     }
+    
     public override void OnUpdate(float deltaTime)
     {
         base.OnUpdate(deltaTime);
 
-        if (hoveredObject == null)
-            return;
+        if (_hoveredObject == null) return;
+        if (!_hoveredObject.CanInteract(parent) || !GetInput() || !_groundMotor.grounded) return;
         
-        if (hoveredObject.CanInteract(parent) && GetInput())
-        {
-            hoveredObject.OnInteract(parent);
-            OnPlayerInteract.Invoke(currentHoveredGameObject);
-        }
+        _hoveredObject.OnInteract(parent);
+        OnPlayerInteract?.Invoke(_currentHoveredGameObject);
     }
 
     bool GetInput()
     {
         return Input.GetKeyDown(KeyCode.E);
     }
-    bool IsGrounded() => parent.GetModule<PlayerGroundMotor>().grounded;
+   
 }
