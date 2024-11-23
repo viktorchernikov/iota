@@ -3,67 +3,59 @@ using UnityEngine;
 
 public class PlayerInteractionSeeker : PlayerModule
 {
-    #region Events
-    public event Action<IInteractable, IInteractable> onHoveredChange;
+    [SerializeField] private float maxSeekDistance = 3f;
+    [SerializeField] private LayerMask tracedLayers = default(LayerMask);
+    
+    public event Action<IInteractable, IInteractable> OnHoveredChange;
     public event Action<GameObject> OnPlayerInteract; 
-    #endregion
-    #region State
-    public IInteractable hoveredObject { get; private set; }
-    #endregion
-    #region Parameters
-    public float maxSeekDistance = 3f;
-    public LayerMask tracedLayers = default(LayerMask);
-    #endregion
+    public IInteractable HoveredObject { get => _hoveredObject; }
+    
+    private GameObject _hoveredGameObject;
+    private IInteractable _hoveredObject;
+    private PlayerGroundMotor _groundMotor;
 
-    GameObject currentHoveredGameObject = null;
-    IInteractable _hoveredObject;
-    RaycastHit[] hitObjects = new RaycastHit[8];
-
-
+    public void Awake()
+    {
+        _groundMotor = GetComponent<PlayerGroundMotor>();
+    }
+    
     public override void OnFixedUpdate(float deltaTime)
     {
         base.OnFixedUpdate(deltaTime);
-
-        IInteractable currentHover = null;
-        int count = Physics.RaycastNonAlloc(parent.usedCamera.forwardRay, hitObjects, maxSeekDistance * parent.currentScale, tracedLayers.value);
-
-        if (count != 0)
+        
+        if (!Physics.Raycast(parent.usedCamera.forwardRay, out var hit, maxSeekDistance * parent.currentScale,
+                tracedLayers.value) || !hit.collider.gameObject.TryGetComponent(out IInteractable interactable))
         {
-            Array.Sort(hitObjects, (a, b) => (b.distance.CompareTo(a.distance)));
-
-            for (int i = 0; i < count; ++i)
-            {
-                var obj = hitObjects[i].transform.gameObject;
-                IInteractable interObj;
-                if (obj.TryGetComponent(out interObj))
-                {
-                    currentHover = interObj;
-                    currentHoveredGameObject = obj;
-                    break;
-                }
-            }
+            EndHover();
+            return;
         }
 
+        if (interactable == _hoveredObject) return;
+        
+        EndHover();
 
-        if (currentHover == hoveredObject)
-            return;
+        var obj = hit.collider.gameObject;
+        
+        _hoveredGameObject = obj;
 
-        var oldHover = hoveredObject;
-        hoveredObject = currentHover;
-        onHoveredChange?.Invoke(oldHover, currentHover);
+        var oldHover = _hoveredObject;
+        _hoveredObject = interactable;
+        
+        if (obj.TryGetComponent<IHoverListener>(out var newHoverListener))
+            newHoverListener.StartHover(this.gameObject);
+        
+        OnHoveredChange?.Invoke(oldHover, interactable);
     }
+    
     public override void OnUpdate(float deltaTime)
     {
         base.OnUpdate(deltaTime);
 
-        if (hoveredObject == null)
-            return;
+        if (_hoveredObject == null) return;
+        if (!_hoveredObject.CanInteract(parent) || !GetInput() || !_groundMotor.grounded) return;
         
-        if (hoveredObject.CanInteract(parent) && GetInput())
-        {
-            hoveredObject.OnInteract(parent);
-            OnPlayerInteract.Invoke(currentHoveredGameObject);
-        }
+        _hoveredObject.OnInteract(parent);
+        OnPlayerInteract?.Invoke(_hoveredGameObject);
     }
 
     bool GetInput()
@@ -71,5 +63,13 @@ public class PlayerInteractionSeeker : PlayerModule
         if (parent.duringCinematic || !parent.isAlive) return false;
         return Input.GetKeyDown(KeyCode.E);
     }
-    bool IsGrounded() => parent.GetModule<PlayerGroundMotor>().grounded;
+
+    private void EndHover()
+    {
+        if (_hoveredGameObject is not null && _hoveredGameObject.TryGetComponent<IHoverListener>(out var oldHoverListener))
+            oldHoverListener.EndHover(this.gameObject);
+            
+        _hoveredObject = null;
+        _hoveredGameObject = null;
+    }
 }

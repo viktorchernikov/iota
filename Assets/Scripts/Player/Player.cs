@@ -130,6 +130,9 @@ public sealed class Player : MonoBehaviour, IInteractor
         hidingSpot = spot;
         yield return null;
     }
+
+    public Transform self { get => transform; }
+
     public void UnhideFromSpot()
     {
         StartCoroutine(UnhideFromSpotCo());

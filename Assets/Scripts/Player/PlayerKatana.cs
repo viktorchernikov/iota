@@ -10,7 +10,9 @@ public class PlayerKatana : MonoBehaviour
     public bool isCooldowned = false;
 
     [SerializeField] private GameObject _katanaModel;
+
     [SerializeField] private PlayerKatanaState _state = PlayerKatanaState.Absent;
+
     // TODO: maybe better to make separate component for player input
     [SerializeField] private KeyCode _keyToHoldKatana = KeyCode.Alpha1;
 
@@ -18,6 +20,23 @@ public class PlayerKatana : MonoBehaviour
     public PlayerKatanaState State => _state;
 
     private PlayerInteractionSeeker _seeker;
+    
+    public void SetKatanaUnavailable()
+    {
+        if (_state is PlayerKatanaState.Absent or PlayerKatanaState.Unavailable) return;
+        
+        _katanaModel.SetActive(false);
+        var newState = PlayerKatanaState.Unavailable;
+        OnKatanaStateChanged?.Invoke(_state, newState);
+        _state = newState;
+    }
+
+    public void SetKatanaAvailable()
+    {
+        if (_state is not PlayerKatanaState.Unavailable or PlayerKatanaState.Absent) return;
+
+        HideKatana();
+    }
 
     private void Awake()
     { 
@@ -32,7 +51,8 @@ public class PlayerKatana : MonoBehaviour
     {
         if (!obj.CompareTag("katana") || _state != PlayerKatanaState.Absent) return;
 
-        HoldKatana();
+        if (_state == PlayerKatanaState.Unavailable) HideKatana();
+        else HoldKatana();
     }
 
     private void Update()
@@ -50,6 +70,7 @@ public class PlayerKatana : MonoBehaviour
         { 
             { PlayerKatanaState.Hided, HoldKatana },
             { PlayerKatanaState.Holding, HideKatana},
+            {PlayerKatanaState.Unavailable, () => {}},
             { PlayerKatanaState.Absent, () => throw new NotImplementedException("Katana state not implemented.")}
         };
 
@@ -102,6 +123,7 @@ public enum PlayerKatanaState
     Absent,
     Hided,
     Holding,
+    Unavailable,
 }
 
   

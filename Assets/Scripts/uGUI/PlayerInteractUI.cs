@@ -20,13 +20,13 @@ public class PlayerInteractUI : MonoBehaviour
         inactivePoint.SetActive(false);
         DisableResponseTextes();
 
-        if (seeker.hoveredObject != null)
+        if (seeker.HoveredObject != null)
         {
-            InteractableHoverResponse res = seeker.hoveredObject.GetHoverResponse(Player.local);
+            InteractableHoverResponse res = seeker.HoveredObject.GetHoverResponse(Player.local);
 
             if (res != InteractableHoverResponse.None)
             {
-                bool canInteract = seeker.hoveredObject.CanInteract(Player.local);
+                bool canInteract = seeker.HoveredObject.CanInteract(Player.local);
 
                 if (canInteract)
                 {

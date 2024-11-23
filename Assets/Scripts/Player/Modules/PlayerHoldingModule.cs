@@ -1,8 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Runtime.InteropServices.WindowsRuntime;
 using UnityEngine;
 
 public class PlayerHoldingModule : PlayerModule
@@ -10,13 +5,20 @@ public class PlayerHoldingModule : PlayerModule
     public IPickupable currentlyHolding;
 
     [Header("Adjustable")]
-    public KeyCode throwKey = KeyCode.Q;
-    public float pullingForce = 5f;
-    public float minThrowingForce = 4f;
-    public float maxThrowingForce = 20f;
-    public float chargingPeriod = 2f;
+    [SerializeField] private KeyCode throwKey = KeyCode.Q;
+    [SerializeField] private  float pullingForce = 5f;
+    [SerializeField] private  float minThrowingForce = 4f;
+    [SerializeField] private  float maxThrowingForce = 20f;
+    [SerializeField] private  float chargingPeriod = 2f;
 
+    private PlayerInteractionSeeker _seeker;
 
+    private void Awake()
+    {
+        _seeker = GetComponent<PlayerInteractionSeeker>();
+        _seeker.OnPlayerInteract += PlayerPickObjectHandler;
+    }
+    
     float timePassed = 0f;
     public override void OnUpdate(float deltaTime)
     {
@@ -49,5 +51,20 @@ public class PlayerHoldingModule : PlayerModule
 
         currentlyHolding.self.GetComponent<Rigidbody>().useGravity = true;
         currentlyHolding = null;
+    }
+
+    public void DeleteHoldingObject()
+    {
+        currentlyHolding.self.gameObject.SetActive(false);
+        currentlyHolding = null;
+    }
+
+    private void PlayerPickObjectHandler(GameObject interactable)
+    {
+        if (!interactable.TryGetComponent<IPickupable>(out var pickupable)) return;
+
+        currentlyHolding = pickupable;
+        
+        GetComponent<PlayerKatana>().SetKatanaUnavailable();
     }
 }
