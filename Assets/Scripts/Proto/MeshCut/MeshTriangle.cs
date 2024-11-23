@@ -15,6 +15,11 @@ public class MeshTriangle
     public void Set(Vector3[] vertices, Vector3[] normals, Vector2[] uvs, int submeshIndex)
     {
         Clear();
+
+        Vertices.Capacity = Vertices.Count + vertices.Length;
+        Normals.Capacity = Normals.Count + normals.Length;
+        UVs.Capacity = UVs.Count + uvs.Length;
+
         Vertices.AddRange(vertices);
         Normals.AddRange(normals);
         UVs.AddRange(uvs);

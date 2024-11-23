@@ -65,8 +65,6 @@ public class GeneratedMesh
         }
     }
 
-
-
     public Mesh GetGeneratedMesh()
     {
         Mesh mesh = new Mesh();
@@ -80,7 +78,16 @@ public class GeneratedMesh
         {
             mesh.SetTriangles(submeshIndices[i], i);
         }
-            return mesh;
+
+        return mesh;
+    }
+
+    public void Clear()
+    {
+        vertices.Clear();
+        normals.Clear();
+        uvs.Clear();
+        submeshIndices.Clear();
     }
     
 }

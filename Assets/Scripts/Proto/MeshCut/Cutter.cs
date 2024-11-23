@@ -21,8 +21,21 @@ public class Cutter : MonoBehaviour
             {
                 triangle.Clear();
             },
-            defaultCapacity: 8,
-            maxSize: 64
+            defaultCapacity: 4,
+            maxSize: 8
+        );
+    private static ObjectPool<GeneratedMesh> generatedMeshPool = new ObjectPool<GeneratedMesh>
+        (
+            createFunc: () =>
+            {
+                return new GeneratedMesh();
+            },
+            actionOnRelease: (GeneratedMesh mesh) =>
+            {
+                mesh.Clear();
+            },
+            defaultCapacity: 2,
+            maxSize: 4
         );
 
 
@@ -35,9 +48,12 @@ public class Cutter : MonoBehaviour
         }
 
         isBusy = true;
-        
+
+        MeshFilter originalMeshFilter = originalGameObject.GetComponent<MeshFilter>();
+        MeshRenderer originalMeshRenderer = originalGameObject.GetComponent<MeshRenderer>();
+
         Plane cutPlane = new Plane(originalGameObject.transform.InverseTransformDirection(-cutNormal), originalGameObject.transform.InverseTransformPoint(contactPoint));
-        originalMesh = originalGameObject.GetComponent<MeshFilter>().mesh;
+        originalMesh = originalMeshFilter.mesh;
         originalMeshVertices = originalMesh.vertices;
         originalMeshNormals = originalMesh.normals;
         originalMeshUv = originalMesh.uv;
@@ -49,8 +65,8 @@ public class Cutter : MonoBehaviour
         }
         
         List<Vector3> addedVertices = new List<Vector3>();
-        GeneratedMesh leftMesh = new GeneratedMesh();
-        GeneratedMesh rightMesh = new GeneratedMesh();
+        GeneratedMesh leftMesh = generatedMeshPool.Get();
+        GeneratedMesh rightMesh = generatedMeshPool.Get();
         
         SeparateMeshes(leftMesh,rightMesh,cutPlane,addedVertices);
         FillCut(addedVertices, cutPlane, leftMesh, rightMesh);
@@ -58,52 +74,59 @@ public class Cutter : MonoBehaviour
         Mesh finishedLeftMesh = leftMesh.GetGeneratedMesh();
         Mesh finishedRightMesh = rightMesh.GetGeneratedMesh();
 
+
+
         //Getting and destroying all original colliders to prevent having multiple colliders
         //of different kinds on one object
-        var originalCols = originalGameObject.GetComponents<Collider>();
-        foreach (var col in originalCols)
+        foreach (var col in originalGameObject.GetComponents<Collider>())
             Destroy(col);
 
-        originalGameObject.GetComponent<MeshFilter>().mesh = finishedLeftMesh;
-        var collider = originalGameObject.AddComponent<MeshCollider>();
-        collider.sharedMesh = finishedLeftMesh;
-        collider.convex = true;
-        
-        Material[] mats = new Material[finishedLeftMesh.subMeshCount];
-        for (int i = 0; i < finishedLeftMesh.subMeshCount; i++)
+        originalMeshFilter.mesh = finishedLeftMesh;
+
+        var originalMeshCollider = originalGameObject.AddComponent<MeshCollider>();
+        originalMeshCollider.sharedMesh = finishedLeftMesh;
+        originalMeshCollider.convex = true;
+
+        int matsCount = Mathf.Min(finishedLeftMesh.subMeshCount, originalMeshRenderer.materials.Length);
+        Material[] mats = new Material[matsCount];
+        for (int i = 0; i < matsCount; i++)
 		{
-            mats[i] = originalGameObject.GetComponent<MeshRenderer>().material;
+            mats[i] = originalMeshRenderer.materials[i];
         }
-        originalGameObject.GetComponent<MeshRenderer>().materials = mats;
+        originalMeshRenderer.materials = mats;
 
         GameObject right = new GameObject();
+        right.tag = originalGameObject.tag;
+
         right.transform.position = originalGameObject.transform.position + (Vector3.up * .05f);
         right.transform.rotation = originalGameObject.transform.rotation;
         right.transform.localScale = originalGameObject.transform.localScale;
-        right.AddComponent<MeshRenderer>();
-        
-        mats = new Material[finishedRightMesh.subMeshCount];
-        for (int i = 0; i < finishedRightMesh.subMeshCount; i++)
+
+        matsCount = Mathf.Min(finishedRightMesh.subMeshCount, originalMeshRenderer.materials.Length);
+        mats = new Material[matsCount];
+        for (int i = 0; i < matsCount; i++)
 		{
-            mats[i] = originalGameObject.GetComponent<MeshRenderer>().material;
+            mats[i] = originalMeshRenderer.materials[i];
         }
-        right.tag = originalGameObject.tag;
-        right.GetComponent<MeshRenderer>().materials = mats;
-        right.AddComponent<MeshFilter>().mesh = finishedRightMesh;
+
+        MeshRenderer rightMeshRenderer = right.AddComponent<MeshRenderer>();
+        rightMeshRenderer.materials = mats;
+
+        MeshFilter rightMeshFilter = right.AddComponent<MeshFilter>();
+        rightMeshFilter.mesh = finishedRightMesh;
         
-        right.AddComponent<MeshCollider>().sharedMesh = finishedRightMesh;
-        var cols = right.GetComponents<MeshCollider>();
-        foreach (var col in cols)
-        {
-            col.convex = true;
-        }
+        MeshCollider rightMeshCollider = right.AddComponent<MeshCollider>();
+        rightMeshCollider.sharedMesh = finishedRightMesh;
+        rightMeshCollider.convex = true;
         
         var rightRigidbody = right.AddComponent<Rigidbody>();
         rightRigidbody.AddRelativeForce(-cutPlane.normal * 250f);
         var leftRigidbody = originalGameObject.GetComponent<Rigidbody>();
         leftRigidbody.AddRelativeForce(cutPlane.normal * 250f);
 
-        
+        generatedMeshPool.Release(leftMesh);
+        generatedMeshPool.Release(rightMesh);
+
         isBusy = false;
     }
 
