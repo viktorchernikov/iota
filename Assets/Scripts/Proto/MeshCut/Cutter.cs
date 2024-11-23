@@ -65,9 +65,21 @@ public class Cutter : MonoBehaviour
         }
         
         List<Vector3> addedVertices = new List<Vector3>();
+        
         GeneratedMesh leftMesh = generatedMeshPool.Get();
         GeneratedMesh rightMesh = generatedMeshPool.Get();
-        
+
+        leftMesh.EnsureCapacity(
+            wantedVertices: originalMeshVertices.Length,
+            wantedNormals: originalMeshNormals.Length,
+            wantedUVs: originalMeshUv.Length
+        );
+        rightMesh.EnsureCapacity(
+            wantedVertices: originalMeshVertices.Length,
+            wantedNormals: originalMeshNormals.Length,
+            wantedUVs: originalMeshUv.Length
+        );
+
         SeparateMeshes(leftMesh,rightMesh,cutPlane,addedVertices);
         FillCut(addedVertices, cutPlane, leftMesh, rightMesh);
 

@@ -17,10 +17,6 @@ public class GeneratedMesh
     {
         int currentVerticeCount = vertices.Count;
 
-        vertices.Capacity = vertices.Count + _triangle.Vertices.Count;
-        normals.Capacity = normals.Count + _triangle.Normals.Count;
-        uvs.Capacity = uvs.Count + _triangle.UVs.Count;
-
         vertices.AddRange(_triangle.Vertices);
         normals.AddRange(_triangle.Normals);
         uvs.AddRange(_triangle.UVs);
@@ -36,6 +32,21 @@ public class GeneratedMesh
         for (int i = 0; i < 3; i++)
         {
             submeshIndices[_triangle.SubmeshIndex].Add(currentVerticeCount + i);
+        }
+    }
+    public void EnsureCapacity(int wantedVertices, int wantedNormals, int wantedUVs)
+    {
+        if (wantedVertices > vertices.Capacity)
+        {
+            vertices.Capacity = wantedVertices;
+        }
+        if (wantedNormals > normals.Capacity)
+        {
+            normals.Capacity = wantedNormals;
+        }
+        if (wantedUVs > uvs.Capacity)
+        {
+            uvs.Capacity = wantedUVs;
         }
     }
 
