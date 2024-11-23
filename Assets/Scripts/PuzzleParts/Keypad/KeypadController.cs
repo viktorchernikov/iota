@@ -4,7 +4,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class KeypadController : MonoBehaviour
+public class KeypadController : MonoBehaviour, IInteractable
 {
     #region State
     public bool IsActive
@@ -12,107 +12,96 @@ public class KeypadController : MonoBehaviour
         get => _isActive;
         private set => _isActive = value;
     }
-    #endregion
-    #region Events
-    //public event Action onActive;
-    //public event Action onDeactive;
+
+    public bool IsBusy
+    {
+        get => _isBusy;
+        private set => _isBusy = value;
+    }
+
+    public float pressedDelay
+    {
+        get => _pressedDelay;
+        private set => _pressedDelay = value;
+    }
     #endregion
 
     #region Editor State
     [Header("State")]
+    [SerializeField] bool _isBusy = false;
     [SerializeField] bool _isActive = false;
     [SerializeField] string password;
+    [SerializeField] int passwordLength = 4;
     #endregion
     #region Delays
     [Header("Delays")]
-    //[SerializeField] float _switchAnimationDelay = 0.4f;
     [SerializeField] float _validDelay = 0.75f;
+    [SerializeField] float _pressedDelay = 0.3f;
     #endregion
     #region Parameters
     [Header("Parameters")]
     [SerializeField] bool _isActiveDefault = false;
     #endregion
     #region Unity Events
-    //[Header("Events")]
-    //[SerializeField] UnityEvent _onActiveEvent;
-    //[SerializeField] UnityEvent _onDeactivateEvent;
+    [Header("Events")]
+    [SerializeField] UnityEvent _onActiveEvent;
+    [SerializeField] UnityEvent _onDeactivateEvent;
     #endregion
     #region Components
     [Header("Components")]
     [SerializeField] TextMeshPro passwordText;
     #endregion
 
-    // Start is called before the first frame update
-    //void Start()
-    //{
-    //    passwordText.text = "";
-    //}
     public InteractableHoverResponse GetHoverResponse(IInteractor interactor)
     {
-        //if (IsPressed)
-        //    return InteractableHoverResponse.None;
-
-        return IsActive ? InteractableHoverResponse.Disable : InteractableHoverResponse.Enable;
+        return IsActive ? InteractableHoverResponse.None : InteractableHoverResponse.Enable;
     }
 
     public void PasswordEntry(string number)
     {
-        if (number == "Clear")
-        {
-            Clear();
-            return;
-        }
-        else if (number == "Enter")
+        if (number.ToLower() == "enter")
         {
             StartCoroutine(Enter());
             return;
         }
+        else if (number.ToLower() == "clear")
+        {
+            Clear();
+            return;
+        }
 
-        Debug.Log(number);
-        passwordText.text += number;
+        if (passwordText.text.Length < passwordLength && !IsBusy) passwordText.text += number;
     }
-
-    //private void Enter()
-    //{
-    //    if (passwordText.text == password)
-    //    {
-    //        door.lockedByPassword = false;
-
-    //        if (audioSource != null)
-    //            audioSource.PlayOneShot(correctSound);
-
-    //        passwordText.color = Color.green;
-    //        StartCoroutine(WaitAndClear());
-    //    }
-    //    else
-    //    {
-    //        if (audioSource != null)
-    //            audioSource.PlayOneShot(wrongSound);
-
-    //        passwordText.color = Color.red;
-    //        StartCoroutine(WaitAndClear());
-    //    }
-    //}
 
     IEnumerator Enter()
     {
+        IsBusy = true;
+        Debug.Log(passwordText.color);
+
         if (passwordText.text == password)
         {
             passwordText.color = Color.green;
+            _onActiveEvent.Invoke();
             IsActive = true;
         }
         else
         {
             passwordText.color = Color.red;
+            _onDeactivateEvent.Invoke();
         }
 
+        Debug.Log(passwordText.color);
+
         yield return new WaitForSeconds(_validDelay);
+
         if (!IsActive) Clear();
+
+        IsBusy = false;
     }
 
     public void Clear()
     {
         passwordText.text = "";
-        passwordText.color = Color.white;
+        passwordText.color = Color.black;
     }
 }
