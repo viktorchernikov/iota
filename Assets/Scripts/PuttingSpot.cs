@@ -35,6 +35,8 @@ public class PuttingSpot : MonoBehaviour, IInteractable, IHoverListener
         _materialsMixOnHover[_objectToPutMaterials.Length] = materialOnHover;
 
         spotModel.transform.localScale = objectToPut.GetModelScale();
+        _spotRenderer.materials = Array.Empty<Material>();
+        _spotMesh.sharedMesh = null;
     }
 
     public InteractableHoverResponse GetHoverResponse(IInteractor interactor)
