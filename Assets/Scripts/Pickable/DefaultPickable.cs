@@ -11,6 +11,11 @@ public class DefaultPickable : MonoBehaviour, IPickupable
     public float holdingDistance => _holdingDistance;
     
     private Rigidbody _rigidbody;
+    
+    private void Awake()
+    {
+        _rigidbody = GetComponent<Rigidbody>();
+    }
 
     public void Throw(Vector3 lookDir, float force)
     {
@@ -45,11 +50,6 @@ public class DefaultPickable : MonoBehaviour, IPickupable
     public Vector3 GetModelScale()
     {
         return model.transform.lossyScale;
-    }
-    
-    private void Awake()
-    {
-        _rigidbody = GetComponent<Rigidbody>();
     }
 }
    

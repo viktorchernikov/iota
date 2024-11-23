@@ -2,8 +2,8 @@
 
 public interface IHoverListener
 {
-        public virtual void OnHoverStart(GameObject emitter) {}
+        public virtual void StartHover(GameObject emitter) {}
         
-        public virtual void OnHoverEnd(GameObject emitter) {}
+        public virtual void EndHover(GameObject emitter) {}
 }
 

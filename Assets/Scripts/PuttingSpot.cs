@@ -2,43 +2,44 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class PuttingSpot : MonoBehaviour, IInteractable, IHoverListener
 {
+    [SerializeField] private GameObject spotModel;
     [SerializeField] private DefaultPickable objectToPut;
-    [SerializeField] private bool hasBeenPutted = false;
-    [SerializeField] private GameObject model;
     [SerializeField] private Material materialOnHover;
 
     public event Action<PuttingSpot> OnPut;
-    
-    private MeshRenderer _renderer;
-    private MeshFilter _mesh;
-    private Material[] _materialsOnHover;
-    private Mesh _meshOnHover;
-    private Material[] _materialsOnPut;
+
+    private bool _hasBeenPutted;
+    private MeshRenderer _spotRenderer;
+    private MeshFilter _spotMesh;
+    private Material[] _materialsMixOnHover;
+    private Material[] _objectToPutMaterials;
+    private Mesh _objectOnPutMesh;
     
     private void Awake()
     {
-        _renderer = model.GetComponent<MeshRenderer>();
-        _mesh = model.GetComponent<MeshFilter>();
+        _spotRenderer = spotModel.GetComponent<MeshRenderer>();
+        _spotMesh = spotModel.GetComponent<MeshFilter>();
         
-        _meshOnHover = objectToPut.GetMeshFilter().sharedMesh;
-        _materialsOnPut = objectToPut.GetRenderer().materials;
+        _objectOnPutMesh = objectToPut.GetMeshFilter().sharedMesh;
+        _objectToPutMaterials = objectToPut.GetRenderer().materials;
 
-        _materialsOnHover = new Material[_materialsOnPut.Length + 1];
+        _materialsMixOnHover = new Material[_objectToPutMaterials.Length + 1];
 
-        for (var i = 0; i < _materialsOnPut.Length; i++)
-            _materialsOnHover[i] = _materialsOnPut[i];
+        for (var i = 0; i < _objectToPutMaterials.Length; i++)
+            _materialsMixOnHover[i] = _objectToPutMaterials[i];
 
-        _materialsOnHover[_materialsOnPut.Length] = materialOnHover;
+        _materialsMixOnHover[_objectToPutMaterials.Length] = materialOnHover;
 
-        model.transform.localScale = objectToPut.GetModelScale();
+        spotModel.transform.localScale = objectToPut.GetModelScale();
     }
 
     public InteractableHoverResponse GetHoverResponse(IInteractor interactor)
     {
-        return InteractableHoverResponse.Enable;
+        return InteractableHoverResponse.Put;
     }
 
     public bool CanInteract(IInteractor interactor)
@@ -52,33 +53,33 @@ public class PuttingSpot : MonoBehaviour, IInteractable, IHoverListener
 
         interactor.self.gameObject.GetComponent<PlayerHoldingModule>().DeleteHoldingObject();
         
-        hasBeenPutted = true;
+        _hasBeenPutted = true;
         
         OnPut?.Invoke(this);
 
-        _renderer.materials = _materialsOnPut;
-        _mesh.sharedMesh = _meshOnHover;
+        _spotRenderer.materials = _objectToPutMaterials;
+        _spotMesh.sharedMesh = _objectOnPutMesh;
     }
 
-    public void OnHoverStart(GameObject emitter)
+    public void StartHover(GameObject emitter)
     {
         if (!ShouldShowGhost(emitter)) return;
         
-        _renderer.materials = _materialsOnHover;
-        _mesh.sharedMesh = _meshOnHover;
+        _spotRenderer.materials = _materialsMixOnHover;
+        _spotMesh.sharedMesh = _objectOnPutMesh;
     }
 
-    public void OnHoverEnd(GameObject emitter)
+    public void EndHover(GameObject emitter)
     {
-        if (hasBeenPutted) return;
+        if (_hasBeenPutted) return;
         
-        _renderer.materials = Array.Empty<Material>();
-        _mesh.sharedMesh = null;
+        _spotRenderer.materials = Array.Empty<Material>();
+        _spotMesh.sharedMesh = null;
     }
 
     private bool ShouldShowGhost(GameObject interactor)
     {
-        return !hasBeenPutted && interactor.TryGetComponent<PlayerHoldingModule>(out var holdingModule) &&
+        return !_hasBeenPutted && interactor.TryGetComponent<PlayerHoldingModule>(out var holdingModule) &&
                ReferenceEquals(holdingModule.currentlyHolding, objectToPut);
     }
 }

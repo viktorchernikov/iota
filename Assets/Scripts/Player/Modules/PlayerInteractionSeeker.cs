@@ -10,7 +10,7 @@ public class PlayerInteractionSeeker : PlayerModule
     public event Action<GameObject> OnPlayerInteract; 
     public IInteractable HoveredObject { get => _hoveredObject; }
     
-    private GameObject _currentHoveredGameObject;
+    private GameObject _hoveredGameObject;
     private IInteractable _hoveredObject;
     private PlayerGroundMotor _groundMotor;
 
@@ -24,30 +24,25 @@ public class PlayerInteractionSeeker : PlayerModule
         base.OnFixedUpdate(deltaTime);
         
         if (!Physics.Raycast(parent.usedCamera.forwardRay, out var hit, maxSeekDistance * parent.currentScale,
-                tracedLayers.value))
+                tracedLayers.value) || !hit.collider.gameObject.TryGetComponent(out IInteractable interactable))
         {
-            EndHoveringOnHover();
-            return;
-        }
-        var obj = hit.collider.gameObject;
-        
-        if (!obj.TryGetComponent(out IInteractable interactable))
-        {
-            EndHoveringOnHover();
+            EndHover();
             return;
         }
 
         if (interactable == _hoveredObject) return;
         
-        EndHoveringOnHover();
+        EndHover();
+
+        var obj = hit.collider.gameObject;
         
-        _currentHoveredGameObject = obj;
+        _hoveredGameObject = obj;
 
         var oldHover = _hoveredObject;
         _hoveredObject = interactable;
         
         if (obj.TryGetComponent<IHoverListener>(out var newHoverListener))
-            newHoverListener.OnHoverStart(this.gameObject);
+            newHoverListener.StartHover(this.gameObject);
         
         OnHoveredChange?.Invoke(oldHover, interactable);
     }
@@ -60,7 +55,7 @@ public class PlayerInteractionSeeker : PlayerModule
         if (!_hoveredObject.CanInteract(parent) || !GetInput() || !_groundMotor.grounded) return;
         
         _hoveredObject.OnInteract(parent);
-        OnPlayerInteract?.Invoke(_currentHoveredGameObject);
+        OnPlayerInteract?.Invoke(_hoveredGameObject);
     }
 
     bool GetInput()
@@ -68,12 +63,12 @@ public class PlayerInteractionSeeker : PlayerModule
         return Input.GetKeyDown(KeyCode.E);
     }
 
-    private void EndHoveringOnHover()
+    private void EndHover()
     {
-        if (_currentHoveredGameObject is not null && _currentHoveredGameObject.TryGetComponent<IHoverListener>(out var oldHoverListener))
-            oldHoverListener.OnHoverEnd(this.gameObject);
+        if (_hoveredGameObject is not null && _hoveredGameObject.TryGetComponent<IHoverListener>(out var oldHoverListener))
+            oldHoverListener.EndHover(this.gameObject);
             
         _hoveredObject = null;
-        _currentHoveredGameObject = null;
+        _hoveredGameObject = null;
     }
 }

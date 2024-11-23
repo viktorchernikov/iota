@@ -18,8 +18,7 @@ public class PlayerHoldingModule : PlayerModule
         _seeker = GetComponent<PlayerInteractionSeeker>();
         _seeker.OnPlayerInteract += PlayerPickObjectHandler;
     }
-
-
+    
     float timePassed = 0f;
     public override void OnUpdate(float deltaTime)
     {
