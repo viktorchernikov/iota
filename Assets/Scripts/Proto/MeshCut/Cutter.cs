@@ -167,15 +167,15 @@ public class Cutter : MonoBehaviour
     private static MeshTriangle GetTriangle(int _triangleIndexA, int _triangleIndexB, int _triangleIndexC, int _submeshIndex)
     {
         var triangle = meshTrianglePool.Get();
-        triangle.Vertices.Add(originalMesh.vertices[_triangleIndexA]);
-        triangle.Vertices.Add(originalMesh.vertices[_triangleIndexB]);
-        triangle.Vertices.Add(originalMesh.vertices[_triangleIndexC]);
-        triangle.Normals.Add(originalMesh.normals[_triangleIndexA]);
-        triangle.Normals.Add(originalMesh.normals[_triangleIndexB]);
-        triangle.Normals.Add(originalMesh.normals[_triangleIndexC]);
-        triangle.UVs.Add(originalMesh.uv[_triangleIndexA]);
-        triangle.UVs.Add(originalMesh.uv[_triangleIndexB]);
-        triangle.UVs.Add(originalMesh.uv[_triangleIndexC]);
+        triangle.Vertices.Add(originalMeshVertices[_triangleIndexA]);
+        triangle.Vertices.Add(originalMeshVertices[_triangleIndexB]);
+        triangle.Vertices.Add(originalMeshVertices[_triangleIndexC]);
+        triangle.Normals.Add(originalMeshNormals[_triangleIndexA]);
+        triangle.Normals.Add(originalMeshNormals[_triangleIndexB]);
+        triangle.Normals.Add(originalMeshNormals[_triangleIndexC]);
+        triangle.UVs.Add(originalMeshUv[_triangleIndexA]);
+        triangle.UVs.Add(originalMeshUv[_triangleIndexB]);
+        triangle.UVs.Add(originalMeshUv[_triangleIndexC]);
         return triangle;
     }
 
@@ -404,7 +404,7 @@ public class Cutter : MonoBehaviour
 
     public static void FillCut(List<Vector3> _addedVertices, Plane _plane, GeneratedMesh _leftMesh, GeneratedMesh _rightMesh)
     {
-        List<Vector3> vertices = new List<Vector3>();
+        HashSet<Vector3> vertices = new HashSet<Vector3>();
         List<Vector3> polygon = new List<Vector3>();
 
         for (int i = 0; i < _addedVertices.Count; i++)
@@ -424,7 +424,7 @@ public class Cutter : MonoBehaviour
         }
     }
 
-    public static void EvaluatePairs(List<Vector3> _addedVertices,List<Vector3> _vertices, List<Vector3> _polygone)
+    public static void EvaluatePairs(List<Vector3> _addedVertices, HashSet<Vector3> _vertices, List<Vector3> _polygone)
     {
         bool isDone = false;
         while(!isDone)
@@ -432,17 +432,19 @@ public class Cutter : MonoBehaviour
             isDone = true;
             for (int i = 0; i < _addedVertices.Count; i+=2)
             {
-                if(_addedVertices[i] == _polygone[_polygone.Count - 1] && !_vertices.Contains(_addedVertices[i + 1]))
+                Vector3 vertexA = _addedVertices[i];
+                Vector3 vertexB = _addedVertices[i + 1];
+                Vector3 lastPolygoneVertex = _polygone[^1];
+
+                if (vertexA == lastPolygoneVertex && _vertices.Add(vertexB))
                 {
                     isDone = false;
-                    _polygone.Add(_addedVertices[i + 1]);
-                    _vertices.Add(_addedVertices[i + 1]);
+                    _polygone.Add(vertexB);
                 } 
-                else if (_addedVertices[i + 1] == _polygone[_polygone.Count - 1] && !_vertices.Contains(_addedVertices[i]))
+                else if (vertexB == lastPolygoneVertex && _vertices.Add(vertexA))
                 {
                     isDone = false;
-                    _polygone.Add(_addedVertices[i]);
-                    _vertices.Add(_addedVertices[i]);
+                    _polygone.Add(vertexA);
                 }
             }
         }

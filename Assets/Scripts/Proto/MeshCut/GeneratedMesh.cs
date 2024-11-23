@@ -17,6 +17,10 @@ public class GeneratedMesh
     {
         int currentVerticeCount = vertices.Count;
 
+        vertices.Capacity = vertices.Count + _triangle.Vertices.Count;
+        normals.Capacity = normals.Count + _triangle.Normals.Count;
+        uvs.Capacity = uvs.Count + _triangle.UVs.Count;
+
         vertices.AddRange(_triangle.Vertices);
         normals.AddRange(_triangle.Normals);
         uvs.AddRange(_triangle.UVs);
@@ -38,6 +42,10 @@ public class GeneratedMesh
     public void AddTriangle(Vector3[] _vertices, Vector3[] _normals, Vector2[] _uvs, int _submeshIndex, Vector4[] _tangents = null)
     {
         int currentVerticeCount = vertices.Count;
+
+        vertices.Capacity = vertices.Count + _vertices.Length;
+        normals.Capacity = normals.Count + _normals.Length;
+        uvs.Capacity = uvs.Count + _uvs.Length;
 
         vertices.AddRange(_vertices);
         normals.AddRange(_normals);
