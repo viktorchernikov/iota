@@ -240,7 +240,7 @@ public sealed class Player : MonoBehaviour, IInteractor
 
     bool IInteractor.CanInteract()
     {
-        return true;
+        return isAlive;
     }
     void IInteractor.OnInteract(InteractionContext context)
     {

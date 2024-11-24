@@ -1,6 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
 
 public class PlayerInteractUI : MonoBehaviour
@@ -11,39 +8,41 @@ public class PlayerInteractUI : MonoBehaviour
     [SerializeField] InteractableHoverResponse[] responseKeys;
     [SerializeField] GameObject[] responseValues;
 
+    private Player _player;
+    private PlayerInteractionSeeker _seeker;
+    
+    private void Awake()
+    {
+        _seeker = Player.local.GetModule<PlayerInteractionSeeker>();
+        _player = Player.local.GetComponent<Player>();
+    }
 
     private void FixedUpdate()
     {
-        PlayerInteractionSeeker seeker = Player.local.GetModule<PlayerInteractionSeeker>();
-
         activePoint.SetActive(false);
         inactivePoint.SetActive(false);
         DisableResponseTextes();
 
-        if (seeker.HoveredObject != null)
+        if (_seeker.HoveredObject == null) return;
+        
+        var res = _seeker.HoveredObject.GetHoverResponse(Player.local);
+
+        if (res == InteractableHoverResponse.None) return;
+        
+        if (_seeker.HoveredObject.CanInteract(Player.local) && ((IInteractor)_player).CanInteract())
         {
-            InteractableHoverResponse res = seeker.HoveredObject.GetHoverResponse(Player.local);
-
-            if (res != InteractableHoverResponse.None)
+            activePoint.SetActive(true);
+            for (var i = 0; i < responseKeys.Length; i++)
             {
-                bool canInteract = seeker.HoveredObject.CanInteract(Player.local);
-
-                if (canInteract)
+                if (responseKeys[i] == res)
                 {
-                    activePoint.SetActive(true);
-                    for (int i = 0; i < responseKeys.Length; i++)
-                    {
-                        if (responseKeys[i] == res)
-                        {
-                            responseValues[i].SetActive(true);
-                        }
-                    }
-                }
-                else
-                {
-                    inactivePoint.SetActive(true);
+                    responseValues[i].SetActive(true);
                 }
             }
+        }
+        else
+        {
+            inactivePoint.SetActive(true);
         }
     }
     void DisableResponseTextes()
