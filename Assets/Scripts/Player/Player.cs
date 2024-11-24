@@ -60,6 +60,7 @@ public sealed class Player : MonoBehaviour, IInteractor
     #endregion
     #region Components
     public PlayerCamera usedCamera { get; private set; }
+    private PlayerCinematicController usedCinematicController;
     /// <summary>
     /// A reference to the rigidbody component used by the player.
     /// </summary>
@@ -77,26 +78,50 @@ public sealed class Player : MonoBehaviour, IInteractor
     public Transform cameraAnchor => _cameraAnchor;
     [Header("Points")]
     [SerializeField] Transform _cameraAnchor;
+
+    [SerializeField] private Transform _spawnPoint;
     #endregion
     #region Constants
     public readonly PlayerDimensions defaultDimensions = new PlayerDimensions() { height = 2f, radius = 0.4f};
     #endregion
+
+    [SerializeField] private ScreenFade screenFade;
     public event Action<InteractionContext> onInteract;
     public event Action<float, float, PlayerDimensions, PlayerDimensions> onScaleChange;
-
 
     public void PrepareToDie(Vector3 focusPoint)
     {
         duringCinematic = true;
+        usedRigidbody.isKinematic = true;
+        isAlive = false;
+        StartCoroutine(PrepareToDieCo(focusPoint));
     }
+
+
+    private IEnumerator PrepareToDieCo(Vector3 focusPoint)
+    {
+        yield return usedCinematicController.AdjustCameraPositionAndViewAngles(usedCamera.transform.position, focusPoint, 3, 180);
+        yield return null;
+    }
+    
     public void Die()
     {
-        // Step 1.
-        // Step 2.
-        // :cry:
-        isAlive = false;
-        // Step 3.
-        // *revive*
+        screenFade.FadeOut();
+        StartCoroutine(DieCo());
+        
+    }
+
+    private IEnumerator DieCo()
+    {
+        yield return new WaitForSeconds(1);
+        yield return null;
+        
+        screenFade.FadeIn();
+        
+        Teleport(_spawnPoint);
+        isAlive = true;
+        usedRigidbody.isKinematic = false;
+        duringCinematic = false;
     }
     public void Teleport(Transform transform)
     {
@@ -121,7 +146,7 @@ public sealed class Player : MonoBehaviour, IInteractor
         duringCinematic = true;
         usedRigidbody.isKinematic = true;
 
-        yield return GetModule<PlayerCinematicController>().AdjustCameraPositionAndViewAngles(destinationPos, destinationRotation.eulerAngles, 3, 180);
+        yield return usedCinematicController.AdjustCameraPositionAndViewAngles(destinationPos, destinationRotation.eulerAngles, 3, 180);
         yield return null;
         Teleport(destinationPos - cameraAnchor.localPosition);
 
@@ -144,7 +169,7 @@ public sealed class Player : MonoBehaviour, IInteractor
 
         duringCinematic = true;
 
-        yield return GetModule<PlayerCinematicController>().AdjustCameraPositionAndViewAngles(destinationPos + cameraAnchor.localPosition, destinationRotation.eulerAngles, 3, 180);
+        yield return usedCinematicController.AdjustCameraPositionAndViewAngles(destinationPos + cameraAnchor.localPosition, destinationRotation.eulerAngles, 3, 180);
         yield return null;
         Teleport(destinationPos);
 
@@ -282,6 +307,7 @@ public sealed class Player : MonoBehaviour, IInteractor
         usedRigidbody = GetComponent<Rigidbody>();
         usedCamera = GetComponentInChildren<PlayerCamera>();
         usedCollider = GetComponentInChildren<CapsuleCollider>();
+        usedCinematicController = GetComponent<PlayerCinematicController>();
 
         usedCamera.Unparent();
     }
