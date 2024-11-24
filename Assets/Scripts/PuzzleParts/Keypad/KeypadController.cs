@@ -24,6 +24,26 @@ public class KeypadController : MonoBehaviour, IInteractable
         get => _pressedDelay;
         private set => _pressedDelay = value;
     }
+
+    //public Animator animator
+    //{
+    //    get => _animator;
+    //    private set => _animator = value;
+    //}
+
+    public AudioSource audioSource
+    {
+        get => _audioSource;
+        private set => _audioSource = value;
+    }
+
+    public AudioClip buttonPressClip
+    {
+        get => _buttonPressClip;
+        private set => _buttonPressClip = value;
+    }
+
+
     #endregion
 
     #region Editor State
@@ -50,6 +70,12 @@ public class KeypadController : MonoBehaviour, IInteractable
     #region Components
     [Header("Components")]
     [SerializeField] TextMeshPro passwordText;
+    //[SerializeField] Animator _animator;
+    [SerializeField] AudioSource _audioSource;
+    #endregion
+    #region Sounds
+    [Header("Sounds")]
+    [SerializeField] AudioClip _buttonPressClip;
     #endregion
 
     public InteractableHoverResponse GetHoverResponse(IInteractor interactor)

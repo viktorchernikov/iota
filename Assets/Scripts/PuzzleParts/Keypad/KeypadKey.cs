@@ -49,9 +49,21 @@ public class KeypadKey : MonoBehaviour, IInteractable
     IEnumerator OnPressedSequence()
     {
         IsPressed = true;
-        controller.PasswordEntry(sKey);
 
-        yield return new WaitForSeconds(controller.pressedDelay);
+        if (!controller.IsActive)
+        {
+            controller.audioSource.Stop();
+            controller.audioSource.time = 0;
+            controller.audioSource.pitch = Random.Range(0.4f, 0.5f);
+
+            controller.audioSource.clip = controller.buttonPressClip;
+            //controller.animator.SetTrigger("OnPress");
+            controller.audioSource.Play();
+
+            controller.PasswordEntry(sKey);
+
+            yield return new WaitForSeconds(controller.pressedDelay);
+        }
 
         IsPressed = false;
     }
