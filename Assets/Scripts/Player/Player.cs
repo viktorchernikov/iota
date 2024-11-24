@@ -67,6 +67,7 @@ public sealed class Player : MonoBehaviour, IInteractor
     public Rigidbody usedRigidbody { get; private set; }
     public CapsuleCollider usedCollider { get; private set; }
     public AudioSource ambientSource;
+    [SerializeField] private ScreenFade screenFade;
     #endregion
     #region Modules
     /// <summary>
@@ -85,7 +86,7 @@ public sealed class Player : MonoBehaviour, IInteractor
     public readonly PlayerDimensions defaultDimensions = new PlayerDimensions() { height = 2f, radius = 0.4f};
     #endregion
 
-    [SerializeField] private ScreenFade screenFade;
+    
     public event Action<InteractionContext> onInteract;
     public event Action<float, float, PlayerDimensions, PlayerDimensions> onScaleChange;
 
