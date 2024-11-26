@@ -64,7 +64,6 @@ GameObject:
   - component: {fileID: 3578920615944526382}
   - component: {fileID: 7240982066532054418}
   - component: {fileID: 8858209655271163833}
-  - component: {fileID: 3008212306100102402}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -473,6 +472,7 @@ MonoBehaviour:
   _moveType: 0
   canMove: 1
   grounded: 0
+  groundNormal: {x: 0, y: 1, z: 0}
   walkSpeed: 3.75
   sprintSpeed: 3.75
   groundDrag: 6
@@ -539,21 +539,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3269cec33b5e46d4bb3e72f1419b5a2f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  attackDelay: 0.25
+  isCooldowned: 0
   _katanaModel: {fileID: 7850512758511519992}
   _state: 0
   _keyToHoldKatana: 49
---- !u!114 &3008212306100102402
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1008716345198243770}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c441e77da270de245bc7db39fdba87f9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &4149906136782952406
 GameObject:
   m_ObjectHideFlags: 0
@@ -856,7 +846,7 @@ CapsuleCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6510801011977748745}
-  m_Material: {fileID: 13400000, guid: 9a739db9861eb8a408a114a73d367ab2, type: 2}
+  m_Material: {fileID: 13400000, guid: 000d969ff8216014caf254b7e3504957, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0

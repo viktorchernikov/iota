@@ -6,6 +6,7 @@ public sealed class PlayerGroundMotor : PlayerMotor
     [Header("State")]
     public bool canMove = true;
     public bool grounded;
+    public Vector3 groundNormal = Vector3.up;
     [Header("Movement")]
     public float walkSpeed;
     public float sprintSpeed;
@@ -132,6 +133,7 @@ public sealed class PlayerGroundMotor : PlayerMotor
 
         RaycastHit hit;
         bool newGrounded = Physics.Raycast(origin, Vector3.down, out hit, groundCheckDistance * parent.currentScale, whatIsGround);
+        groundNormal = newGrounded ? hit.normal : Vector3.up;
         if (!grounded && newGrounded)
         {
             if (Time.time - lastLandingTime > 0.3f)
@@ -234,7 +236,10 @@ public sealed class PlayerGroundMotor : PlayerMotor
         moveDirection = parent.bodyForward * verticalInput + parent.bodyRight * horizontalInput;
 
         if (grounded)
-            rb.AddForce(moveDirection.normalized * moveSpeed * speedScalePropoprtion.Evaluate(parent.currentScale) * 10f, ForceMode.Force);
+        {
+            rb.AddForce(-Physics.gravity, ForceMode.Acceleration);
+            rb.AddForce(Vector3.ProjectOnPlane(moveDirection.normalized, groundNormal) * moveSpeed * speedScalePropoprtion.Evaluate(parent.currentScale) * 10f, ForceMode.Force);
+        }
         else
             rb.AddForce(moveDirection.normalized * moveSpeed * speedScalePropoprtion.Evaluate(parent.currentScale) * 10f * airMultiplier, ForceMode.Force);
     }
