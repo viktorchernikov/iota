@@ -13,10 +13,10 @@ public class CuttingWorker
     private GeneratedMesh leftMesh = new GeneratedMesh();
     private GeneratedMesh rightMesh = new GeneratedMesh();
 
-    private static Mesh originalMesh;
-    private static Vector3[] originalMeshVertices;
-    private static Vector3[] originalMeshNormals;
-    private static Vector2[] originalMeshUv;
+    private Mesh originalMesh;
+    private Vector3[] originalMeshVertices;
+    private Vector3[] originalMeshNormals;
+    private Vector2[] originalMeshUv; 
     private Plane cutPlane;
 
     private static ObjectPool<MeshTriangle> meshTrianglePool = new ObjectPool<MeshTriangle>
@@ -128,7 +128,7 @@ public class CuttingWorker
     /// <param name="rightMesh"></param>
     /// <param name="plane"></param>
     /// <param name="addedVertices"></param>
-    private static void SeparateMeshes(GeneratedMesh leftMesh, GeneratedMesh rightMesh, Plane plane, List<Vector3> addedVertices)
+    private void SeparateMeshes(GeneratedMesh leftMesh, GeneratedMesh rightMesh, Plane plane, List<Vector3> addedVertices)
     {
         for (int i = 0; i < originalMesh.subMeshCount; i++)
         {
@@ -177,7 +177,7 @@ public class CuttingWorker
     /// <param name="_triangleIndexC"></param>
     /// <param name="_submeshIndex"></param>
     /// <returns></returns>
-    private static MeshTriangle GetTriangle(int _triangleIndexA, int _triangleIndexB, int _triangleIndexC, int _submeshIndex)
+    private MeshTriangle GetTriangle(int _triangleIndexA, int _triangleIndexB, int _triangleIndexC, int _submeshIndex)
     {
         var triangle = meshTrianglePool.Get();
         triangle.Vertices.Add(originalMeshVertices[_triangleIndexA]);
@@ -204,7 +204,7 @@ public class CuttingWorker
     /// <param name="leftMesh"></param>
     /// <param name="rightMesh"></param>
     /// <param name="addedVertices"></param>
-    private static void CutTriangle(Plane plane, MeshTriangle triangle, bool triangleALeftSide, bool triangleBLeftSide, bool triangleCLeftSide,
+    private void CutTriangle(Plane plane, MeshTriangle triangle, bool triangleALeftSide, bool triangleBLeftSide, bool triangleCLeftSide,
     GeneratedMesh leftMesh, GeneratedMesh rightMesh, List<Vector3> addedVertices)
     {
         List<bool> leftSide = new List<bool>();
@@ -401,7 +401,7 @@ public class CuttingWorker
         ArrayPool<Vector3>.Shared.Return(updatedNormals);
         ArrayPool<Vector2>.Shared.Return(updatedUVs);
     }
-    private static void FlipTriangel(MeshTriangle _triangle)
+    private void FlipTriangel(MeshTriangle _triangle)
     {
         Vector3 temp = _triangle.Vertices[2];
         _triangle.Vertices[2] = _triangle.Vertices[0];
@@ -414,7 +414,7 @@ public class CuttingWorker
         (_triangle.UVs[2], _triangle.UVs[0]) = (_triangle.UVs[0], _triangle.UVs[2]);
     }
 
-    public static void FillCut(List<Vector3> _addedVertices, Plane _plane, GeneratedMesh _leftMesh, GeneratedMesh _rightMesh)
+    public void FillCut(List<Vector3> _addedVertices, Plane _plane, GeneratedMesh _leftMesh, GeneratedMesh _rightMesh)
     {
         HashSet<Vector3> vertices = new HashSet<Vector3>();
         List<Vector3> polygon = new List<Vector3>();
@@ -462,7 +462,7 @@ public class CuttingWorker
         }
     }
 
-    private static void Fill(List<Vector3> _vertices, Plane _plane, GeneratedMesh _leftMesh, GeneratedMesh _rightMesh)
+    private void Fill(List<Vector3> _vertices, Plane _plane, GeneratedMesh _leftMesh, GeneratedMesh _rightMesh)
     {
         //Firstly we need the center we do this by adding up all the vertices and then calculating the average
         Vector3 centerPosition = Vector3.zero;
