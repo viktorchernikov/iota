@@ -11,7 +11,7 @@ public class PlayerInteractUI : MonoBehaviour
     private Player _player;
     private PlayerInteractionSeeker _seeker;
     
-    private void Awake()
+    private void Start()
     {
         _seeker = Player.local.GetModule<PlayerInteractionSeeker>();
         _player = Player.local.GetComponent<Player>();
