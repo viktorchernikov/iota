@@ -2,18 +2,34 @@ using UnityEngine;
 
 public class CuttableObject : MonoBehaviour
 {
-    public Mesh GetMesh()
+    public CuttableObjectDeformation deformation = CuttableObjectDeformation.NonDeformable;
+
+    // Deformable components
+    SkinnedMeshRenderer _skinnedrenderer;
+    // Non deformable components
+    MeshFilter _meshFilter;
+    MeshRenderer _meshRenderer;
+
+
+    private void Awake()
     {
-        // TODO: Rewrite!!
-        return GetComponent<MeshFilter>().mesh;
+        if (deformation == CuttableObjectDeformation.NonDeformable)
+        {
+            _meshFilter = GetComponent<MeshFilter>();
+            _meshRenderer = GetComponent<MeshRenderer>();
+        }
+        else
+        {
+            _skinnedrenderer = GetComponentInChildren<SkinnedMeshRenderer>();
+        }
     }
-    public Renderer GetRenderer()
-    {
-        return GetComponent<MeshRenderer>();
-    }
+
     public void UpdateMesh(Mesh newMesh)
     {
-        GetComponent<MeshFilter>().mesh = newMesh;
+        if (deformation == CuttableObjectDeformation.NonDeformable)
+            _meshFilter.mesh = newMesh;
+        else
+            _skinnedrenderer.sharedMesh = newMesh;
     }
     public void SetColision(Mesh collisionMesh)
     {
@@ -23,4 +39,18 @@ public class CuttableObject : MonoBehaviour
         newCollider.sharedMesh = collisionMesh;
         newCollider.convex = true;
     }
+
+    public Mesh GetMesh() => deformation == CuttableObjectDeformation.NonDeformable ? _meshFilter.mesh : _skinnedrenderer.sharedMesh;
+    public Renderer GetRenderer() => deformation == CuttableObjectDeformation.NonDeformable ? _meshRenderer : _meshRenderer;
+}
+public enum CuttableObjectDeformation
+{
+    /// <summary>
+    /// Mesh that is static, doesn't deform. MeshFilter component is used
+    /// </summary>
+    NonDeformable,
+    /// <summary>
+    /// Mesh that is deformable. SkinnedMeshRenderer component is used
+    /// </summary>
+    Deformable
 }
