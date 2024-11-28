@@ -10,7 +10,6 @@ public sealed class Player : MonoBehaviour, IInteractor
     [Header("OnStart")]
     public float initialScale = 1f;
     [SerializeField] private float maxPlayerDivingDepth;
-    [SerializeField] private float offsetFromMaxDivingDepth;
     #region State
     public bool isAlive { get; private set; } = true;
     public bool duringCinematic { get; private set; } = false;
