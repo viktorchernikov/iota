@@ -9,6 +9,8 @@ public sealed class Player : MonoBehaviour, IInteractor
 {
     [Header("OnStart")]
     public float initialScale = 1f;
+    [SerializeField] private float maxPlayerDivingDepth;
+    [SerializeField] private float offsetFromMaxDivingDepth;
     #region State
     public bool isAlive { get; private set; } = true;
     public bool duringCinematic { get; private set; } = false;
@@ -97,6 +99,13 @@ public sealed class Player : MonoBehaviour, IInteractor
         isAlive = false;
         StartCoroutine(PrepareToDieCo(focusPoint));
     }
+    
+    public void PrepareToDie()
+    {
+        duringCinematic = true;
+        usedRigidbody.isKinematic = true;
+        isAlive = false;
+    }
 
 
     private IEnumerator PrepareToDieCo(Vector3 focusPoint)
@@ -109,7 +118,6 @@ public sealed class Player : MonoBehaviour, IInteractor
     {
         screenFade.FadeOut();
         StartCoroutine(DieCo());
-        
     }
 
     private IEnumerator DieCo()
@@ -139,6 +147,41 @@ public sealed class Player : MonoBehaviour, IInteractor
     {
         StartCoroutine(HideInSpotCo(spot));
     }
+
+    private Vector3 _lastPosition;
+    
+    public void PlayerDiving(float divingDepth, Vector3 teleportPoint, bool isDeadly)
+    {
+        if (isDeadly)
+        {
+            PrepareToDie();
+            Die();
+            return;
+        }
+        
+        if (_lastPosition == transform.position) return;
+        
+        if (divingDepth >= maxPlayerDivingDepth)
+        {
+            usedRigidbody.isKinematic = true;
+            duringCinematic = true;
+            StartCoroutine(PlayerDivingCo(teleportPoint));
+        }
+        
+        _lastPosition = transform.position;
+    }
+
+    private IEnumerator PlayerDivingCo(Vector3 teleportPoint)
+    {
+        screenFade.FadeOut();
+        yield return new WaitForSeconds(1);
+        yield return null;
+        Teleport(teleportPoint);
+        screenFade.FadeIn();
+        usedRigidbody.isKinematic = false;
+        duringCinematic = false;
+    }
+    
     IEnumerator HideInSpotCo(HidingSpot spot)
     {
         Vector3 destinationPos = spot.hidePoint.position;
