@@ -25,12 +25,6 @@ public class KeypadController : MonoBehaviour, IInteractable
         private set => _pressedDelay = value;
     }
 
-    //public Animator animator
-    //{
-    //    get => _animator;
-    //    private set => _animator = value;
-    //}
-
     public AudioSource audioSource
     {
         get => _audioSource;
@@ -70,7 +64,6 @@ public class KeypadController : MonoBehaviour, IInteractable
     #region Components
     [Header("Components")]
     [SerializeField] TextMeshPro passwordText;
-    //[SerializeField] Animator _animator;
     [SerializeField] AudioSource _audioSource;
     #endregion
     #region Sounds

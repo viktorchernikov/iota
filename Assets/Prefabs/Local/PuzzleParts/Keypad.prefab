@@ -1623,6 +1623,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   passwordText: {fileID: 4121648621426248847}
+  _animator: {fileID: 2042657082190934523}
   _audioSource: {fileID: 5517124971323648062}
   _buttonPressClip: {fileID: 8300000, guid: 114644ef1f79f4e42818eee14e4fb707, type: 3}
 --- !u!82 &5517124971323648062

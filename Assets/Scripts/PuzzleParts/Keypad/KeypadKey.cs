@@ -21,6 +21,7 @@ public class KeypadKey : MonoBehaviour, IInteractable
     [Header("Components")]
     [SerializeField] Text key;
     [SerializeField] KeypadController controller;
+    [SerializeField] Animator _animator;
     #endregion
 
     public InteractableHoverResponse GetHoverResponse(IInteractor interactor)
@@ -57,7 +58,7 @@ public class KeypadKey : MonoBehaviour, IInteractable
             controller.audioSource.pitch = Random.Range(0.4f, 0.5f);
 
             controller.audioSource.clip = controller.buttonPressClip;
-            //controller.animator.SetTrigger("OnPress");
+            _animator.SetTrigger("OnPress");
             controller.audioSource.Play();
 
             controller.PasswordEntry(sKey);
