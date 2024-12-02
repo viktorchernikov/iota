@@ -58,7 +58,7 @@ public class KeypadKey : MonoBehaviour, IInteractable
             controller.audioSource.pitch = Random.Range(0.4f, 0.5f);
 
             controller.audioSource.clip = controller.buttonPressClip;
-            _animator.SetTrigger("OnPress");
+            _animator.SetTrigger($"OnPress{sKey}");
             controller.audioSource.Play();
 
             controller.PasswordEntry(sKey);

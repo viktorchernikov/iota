@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 1477302918473307901}
   - component: {fileID: 896583784390776538}
   - component: {fileID: 1951418045437946946}
+  - component: {fileID: 6134444276652968522}
   m_Layer: 0
   m_Name: KeyNum.Enter
   m_TagString: Untagged
@@ -101,6 +102,7 @@ MonoBehaviour:
   sKey: Enter
   key: {fileID: 0}
   controller: {fileID: 6191191687359308809}
+  _animator: {fileID: 6134444276652968522}
 --- !u!65 &1951418045437946946
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -122,6 +124,27 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.14368865, y: 0.40062118, z: 0.4006215}
   m_Center: {x: 0.011363446, y: -0.000000014901161, z: 0.0000009536743}
+--- !u!95 &6134444276652968522
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 43695267340495639}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 373a606cbfd60594daa8361be442aa05, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &304845538952267253
 GameObject:
   m_ObjectHideFlags: 0
@@ -135,6 +158,7 @@ GameObject:
   - component: {fileID: 6117442011496071779}
   - component: {fileID: 1914416268986404044}
   - component: {fileID: 8927429061743891413}
+  - component: {fileID: 5922355794574509802}
   m_Layer: 0
   m_Name: KeyNum.Clear
   m_TagString: Untagged
@@ -223,6 +247,7 @@ MonoBehaviour:
   sKey: Clear
   key: {fileID: 0}
   controller: {fileID: 6191191687359308809}
+  _animator: {fileID: 5922355794574509802}
 --- !u!65 &8927429061743891413
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -244,6 +269,27 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.14368865, y: 0.40062118, z: 0.4006215}
   m_Center: {x: 0.011363446, y: -0.000000014901161, z: 0}
+--- !u!95 &5922355794574509802
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 304845538952267253}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 373a606cbfd60594daa8361be442aa05, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &1255658759231089052
 GameObject:
   m_ObjectHideFlags: 0
@@ -340,6 +386,7 @@ GameObject:
   - component: {fileID: 890525128156735327}
   - component: {fileID: 8014392655185120734}
   - component: {fileID: 6376001982448471780}
+  - component: {fileID: 4154953778353118280}
   m_Layer: 0
   m_Name: KeyNum.2
   m_TagString: Untagged
@@ -428,6 +475,7 @@ MonoBehaviour:
   sKey: 2
   key: {fileID: 0}
   controller: {fileID: 6191191687359308809}
+  _animator: {fileID: 4154953778353118280}
 --- !u!65 &6376001982448471780
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -449,6 +497,27 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.14368865, y: 0.40062118, z: 0.40062127}
   m_Center: {x: 0.011363446, y: 0, z: -0.0000010058284}
+--- !u!95 &4154953778353118280
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1314400531110770627}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 373a606cbfd60594daa8361be442aa05, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &2398392436702508576
 GameObject:
   m_ObjectHideFlags: 0
@@ -462,6 +531,7 @@ GameObject:
   - component: {fileID: 9091662915500598505}
   - component: {fileID: 3828613931114764859}
   - component: {fileID: 6047265733358525132}
+  - component: {fileID: 9040354007462457108}
   m_Layer: 0
   m_Name: KeyNum.8
   m_TagString: Untagged
@@ -550,6 +620,7 @@ MonoBehaviour:
   sKey: 8
   key: {fileID: 0}
   controller: {fileID: 6191191687359308809}
+  _animator: {fileID: 9040354007462457108}
 --- !u!65 &6047265733358525132
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -571,6 +642,27 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.14368865, y: 0.40062118, z: 0.40062127}
   m_Center: {x: 0.01136344, y: 0, z: -0.0000010058284}
+--- !u!95 &9040354007462457108
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2398392436702508576}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 373a606cbfd60594daa8361be442aa05, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &2601545382057437186
 GameObject:
   m_ObjectHideFlags: 0
@@ -584,6 +676,7 @@ GameObject:
   - component: {fileID: 45647004247563620}
   - component: {fileID: 975807435050638062}
   - component: {fileID: 8912280599869547573}
+  - component: {fileID: 4762782664968307666}
   m_Layer: 0
   m_Name: KeyNum.7
   m_TagString: Untagged
@@ -672,6 +765,7 @@ MonoBehaviour:
   sKey: 7
   key: {fileID: 0}
   controller: {fileID: 6191191687359308809}
+  _animator: {fileID: 4762782664968307666}
 --- !u!65 &8912280599869547573
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -693,6 +787,27 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.14368865, y: 0.40062118, z: 0.4006215}
   m_Center: {x: 0.011363446, y: 0, z: 0}
+--- !u!95 &4762782664968307666
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2601545382057437186}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 373a606cbfd60594daa8361be442aa05, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &2851280565598938421
 GameObject:
   m_ObjectHideFlags: 0
@@ -706,6 +821,7 @@ GameObject:
   - component: {fileID: 4743618637108872095}
   - component: {fileID: 7230228935671446065}
   - component: {fileID: 1325511948196124241}
+  - component: {fileID: 3436069391283163785}
   m_Layer: 0
   m_Name: KeyNum.4
   m_TagString: Untagged
@@ -794,6 +910,7 @@ MonoBehaviour:
   sKey: 4
   key: {fileID: 0}
   controller: {fileID: 6191191687359308809}
+  _animator: {fileID: 3436069391283163785}
 --- !u!65 &1325511948196124241
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -815,6 +932,27 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.14368865, y: 0.40062118, z: 0.4006215}
   m_Center: {x: 0.011363446, y: 0.000000007450581, z: 0}
+--- !u!95 &3436069391283163785
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2851280565598938421}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 373a606cbfd60594daa8361be442aa05, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &3602713626689230774
 GameObject:
   m_ObjectHideFlags: 0
@@ -828,6 +966,7 @@ GameObject:
   - component: {fileID: 3611658906850196531}
   - component: {fileID: 5357357402132419038}
   - component: {fileID: 6372700850841374794}
+  - component: {fileID: 5420116099118781815}
   m_Layer: 0
   m_Name: KeyNum.1
   m_TagString: Untagged
@@ -916,6 +1055,7 @@ MonoBehaviour:
   sKey: 1
   key: {fileID: 0}
   controller: {fileID: 6191191687359308809}
+  _animator: {fileID: 5420116099118781815}
 --- !u!65 &6372700850841374794
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -937,6 +1077,27 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.14368865, y: 0.40062118, z: 0.4006215}
   m_Center: {x: 0.011363446, y: 0, z: 0}
+--- !u!95 &5420116099118781815
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3602713626689230774}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 373a606cbfd60594daa8361be442aa05, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &5765394432620202856
 GameObject:
   m_ObjectHideFlags: 0
@@ -1039,6 +1200,7 @@ MonoBehaviour:
   sKey: 0
   key: {fileID: 0}
   controller: {fileID: 6191191687359308809}
+  _animator: {fileID: 2042657082190934523}
 --- !u!65 &1383675699308510793
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1094,6 +1256,7 @@ GameObject:
   - component: {fileID: 2542151701498333473}
   - component: {fileID: 5676088284654840445}
   - component: {fileID: 5079250871383915499}
+  - component: {fileID: 1955511848503006164}
   m_Layer: 0
   m_Name: KeyNum.3
   m_TagString: Untagged
@@ -1182,6 +1345,7 @@ MonoBehaviour:
   sKey: 3
   key: {fileID: 0}
   controller: {fileID: 6191191687359308809}
+  _animator: {fileID: 1955511848503006164}
 --- !u!65 &5079250871383915499
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1203,6 +1367,27 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.14368865, y: 0.40062118, z: 0.4006215}
   m_Center: {x: 0.011363446, y: 0, z: 0.0000009536743}
+--- !u!95 &1955511848503006164
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6115769055889983005}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 373a606cbfd60594daa8361be442aa05, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &6218988105905169675
 GameObject:
   m_ObjectHideFlags: 0
@@ -1387,6 +1572,7 @@ GameObject:
   - component: {fileID: 4545921437695325529}
   - component: {fileID: 143578987624847624}
   - component: {fileID: 8734316785761065457}
+  - component: {fileID: 169240456448420000}
   m_Layer: 0
   m_Name: KeyNum.5
   m_TagString: Untagged
@@ -1475,6 +1661,7 @@ MonoBehaviour:
   sKey: 5
   key: {fileID: 0}
   controller: {fileID: 6191191687359308809}
+  _animator: {fileID: 169240456448420000}
 --- !u!65 &8734316785761065457
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1496,6 +1683,27 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.14368865, y: 0.40062118, z: 0.40062127}
   m_Center: {x: 0.011363446, y: 0.000000007450581, z: -0.0000010058284}
+--- !u!95 &169240456448420000
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6545274337957705055}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 373a606cbfd60594daa8361be442aa05, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &7918432965298077381
 GameObject:
   m_ObjectHideFlags: 0
@@ -1623,7 +1831,6 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   passwordText: {fileID: 4121648621426248847}
-  _animator: {fileID: 2042657082190934523}
   _audioSource: {fileID: 5517124971323648062}
   _buttonPressClip: {fileID: 8300000, guid: 114644ef1f79f4e42818eee14e4fb707, type: 3}
 --- !u!82 &5517124971323648062
@@ -1735,6 +1942,7 @@ GameObject:
   - component: {fileID: 3088273623302459963}
   - component: {fileID: 998202997968299150}
   - component: {fileID: 2810098758451357403}
+  - component: {fileID: 7990603836807315527}
   m_Layer: 0
   m_Name: KeyNum.9
   m_TagString: Untagged
@@ -1823,6 +2031,7 @@ MonoBehaviour:
   sKey: 9
   key: {fileID: 0}
   controller: {fileID: 6191191687359308809}
+  _animator: {fileID: 7990603836807315527}
 --- !u!65 &2810098758451357403
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1844,6 +2053,27 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.14368865, y: 0.40062118, z: 0.4006215}
   m_Center: {x: 0.011363446, y: 0, z: 0.0000009536743}
+--- !u!95 &7990603836807315527
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8243436289062783185}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 373a606cbfd60594daa8361be442aa05, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &8766536981745443136
 GameObject:
   m_ObjectHideFlags: 0
@@ -1857,6 +2087,7 @@ GameObject:
   - component: {fileID: 8273049377598437192}
   - component: {fileID: 3604600260234329384}
   - component: {fileID: 1744236272047553878}
+  - component: {fileID: 4446991621423348916}
   m_Layer: 0
   m_Name: KeyNum.6
   m_TagString: Untagged
@@ -1945,6 +2176,7 @@ MonoBehaviour:
   sKey: 6
   key: {fileID: 0}
   controller: {fileID: 6191191687359308809}
+  _animator: {fileID: 4446991621423348916}
 --- !u!65 &1744236272047553878
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1966,3 +2198,24 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.14368865, y: 0.40062118, z: 0.4006215}
   m_Center: {x: 0.011363446, y: 0.000000007450581, z: 0.0000009536743}
+--- !u!95 &4446991621423348916
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8766536981745443136}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 373a606cbfd60594daa8361be442aa05, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
