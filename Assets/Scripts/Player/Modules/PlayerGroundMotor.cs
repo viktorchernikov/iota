@@ -10,14 +10,18 @@ public sealed class PlayerGroundMotor : PlayerMotor
     [Header("Movement")]
     public float walkSpeed;
     public float sprintSpeed;
+    public float crouchSpeed;
     public float groundDrag;
+    public float crouchScaleY;
     public float jumpForce;
     public float jumpCooldown;
     public float airMultiplier;
     public AnimationCurve speedScalePropoprtion;
+    bool crouching;
     bool readyToJump;
 
     [HideInInspector] public float moveSpeed;
+    [HideInInspector] public float standScaleY;
 
     [Header("Stamina")]
     public bool StaminaWorkInSky = true;
@@ -29,6 +33,7 @@ public sealed class PlayerGroundMotor : PlayerMotor
     public float currentStamina;
 
     [Header("Keybinds")]
+    public KeyCode crouchKey = KeyCode.LeftControl;
     public KeyCode jumpKey = KeyCode.Space;
     public KeyCode sprintKey = KeyCode.LeftShift;
 
@@ -67,6 +72,8 @@ public sealed class PlayerGroundMotor : PlayerMotor
         rb = parent.usedRigidbody;
         rb.freezeRotation = true;
         readyToJump = true;
+        crouching = false;
+        standScaleY = transform.localScale.y;
         currentStamina = maxStamina;
 
         audioSource = gameObject.AddComponent<AudioSource>();
@@ -180,20 +187,26 @@ public sealed class PlayerGroundMotor : PlayerMotor
             Invoke(nameof(ResetJump), jumpCooldown);
         }
 
+        if (Input.GetKeyDown(crouchKey) && grounded)
+        {
+            Crouch();
+        }
+
         // Sprawd�, czy gracz si� porusza
         bool isMoving = Mathf.Abs(horizontalInput) > 0.1f || Mathf.Abs(verticalInput) > 0.1f;
 
         if (!isMoving)
         {
-            
             sprinting = false;
         }
 
-
-
-        if (currentStamina < minSprintStamina)
+        if (currentStamina < minSprintStamina && !crouching)
         {
             moveSpeed = walkSpeed;
+        }
+        else if (crouching)
+        {
+            moveSpeed = walkSpeed * crouchSpeed;
         }
         else
         {
@@ -222,8 +235,8 @@ public sealed class PlayerGroundMotor : PlayerMotor
             }
         }
 
-        if (currentStamina < Whenlessthenstoprun && currentStamina > 0f && grounded) 
-            {
+        if (currentStamina < Whenlessthenstoprun && currentStamina > 0f && grounded && !crouching) 
+        {
             moveSpeed = walkSpeed;
         }
     }
@@ -271,6 +284,16 @@ public sealed class PlayerGroundMotor : PlayerMotor
     private void ResetJump()
     {
         readyToJump = true;
+    }
+
+    private void Crouch()
+    {
+        crouching = !crouching;
+
+        if (crouching) transform.localScale = new Vector3(transform.localScale.x, crouchScaleY, transform.localScale.z);
+        else transform.localScale = new Vector3(transform.localScale.x, standScaleY, transform.localScale.z);
+
+        rb.AddForce(Vector3.down * 5, ForceMode.Impulse);
     }
 
     private void RegenerateStamina()

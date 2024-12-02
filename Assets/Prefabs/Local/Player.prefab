@@ -475,7 +475,9 @@ MonoBehaviour:
   groundNormal: {x: 0, y: 1, z: 0}
   walkSpeed: 3.75
   sprintSpeed: 3.75
+  crouchSpeed: 0.7
   groundDrag: 6
+  crouchScaleY: 0.6
   jumpForce: 0
   jumpCooldown: 0
   airMultiplier: 0.5
@@ -504,6 +506,7 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   moveSpeed: 0
+  standScaleY: 0
   StaminaWorkInSky: 1
   maxStamina: 100
   staminaRegenRate: 3.5
@@ -511,6 +514,7 @@ MonoBehaviour:
   minSprintStamina: 0
   Whenlessthenstoprun: 5
   currentStamina: 0
+  crouchKey: 0
   jumpKey: 0
   sprintKey: 0
   groundCheckDistance: 0.3
