@@ -7,13 +7,15 @@ public class Valve : MonoBehaviour, IInteractable
 {
     #region State
     public bool isOpen { get => _isOpen; private set => _isOpen = value; }
-    public bool isBusy { get => _isBusy; private set => _isBusy = value; }
+    public bool isHolding { get => _isHolding; private set => _isHolding = value; }
+    public bool isStarted { get => _isStarted; private set => _isStarted = value; }
     #endregion
 
     #region Editor State
     [Header("State")]
     [SerializeField] bool _isOpen = false;
-    [SerializeField] bool _isBusy = false;
+    [SerializeField] bool _isHolding = false;
+    [SerializeField] bool _isStarted = false;
     #endregion
     #region Unity Events
     [Header("Events")]
@@ -41,7 +43,7 @@ public class Valve : MonoBehaviour, IInteractable
 
     public InteractableHoverResponse GetHoverResponse(IInteractor interactor)
     {
-        if (isBusy)
+        if (isHolding)
             return InteractableHoverResponse.None;
 
         return isOpen ? InteractableHoverResponse.Close : InteractableHoverResponse.Open;
@@ -52,19 +54,19 @@ public class Valve : MonoBehaviour, IInteractable
         Player player = interactor as Player;
         if (!player) return false;
 
-        return !isBusy;
+        return !isHolding;
     }
 
     public void OnInteract(IInteractor interactor)
     {
-        if (isBusy)
+        if (isHolding)
             return;
         StartCoroutine(ValveSequence());
     }
 
     IEnumerator ValveSequence()
     {
-        isBusy = true;
+        isHolding = true;
         _audioSource.Stop();
         _audioSource.time = 0;
         _audioSource.pitch = 0.95f; // UnityEngine.Random.Range(0.8f, 1.05f);
@@ -93,6 +95,6 @@ public class Valve : MonoBehaviour, IInteractable
 
         yield return new WaitForSeconds(_valvePostDelay);
 
-        isBusy = false;
+        isHolding = false;
     }
 }

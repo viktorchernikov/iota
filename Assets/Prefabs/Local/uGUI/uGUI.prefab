@@ -63,7 +63,7 @@ RectTransform:
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 4953862107962857140}
+  - {fileID: 2879357313689367199}
   m_Father: {fileID: 8096994254827251349}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -134,7 +134,7 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
---- !u!1001 &3021299088996953496
+--- !u!1001 &5379515584190581171
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -142,10 +142,36 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 3518376930768617068}
     m_Modifications:
+    - target: {fileID: 72921379239611466, guid: 9f3362370e1fe8d409ea20bea45305ff,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1715978392003972047, guid: 9f3362370e1fe8d409ea20bea45305ff,
         type: 3}
       propertyPath: m_Name
       value: PlayerInteractUI
+      objectReference: {fileID: 0}
+    - target: {fileID: 4009229991697533167, guid: 9f3362370e1fe8d409ea20bea45305ff,
+        type: 3}
+      propertyPath: m_fontAsset
+      value: 
+      objectReference: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee,
+        type: 2}
+    - target: {fileID: 4009229991697533167, guid: 9f3362370e1fe8d409ea20bea45305ff,
+        type: 3}
+      propertyPath: m_sharedMaterial
+      value: 
+      objectReference: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+    - target: {fileID: 7128816450298357086, guid: 9f3362370e1fe8d409ea20bea45305ff,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7613362844154715353, guid: 9f3362370e1fe8d409ea20bea45305ff,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7877473960730508076, guid: 9f3362370e1fe8d409ea20bea45305ff,
         type: 3}
@@ -252,9 +278,9 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9f3362370e1fe8d409ea20bea45305ff, type: 3}
---- !u!224 &4953862107962857140 stripped
+--- !u!224 &2879357313689367199 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 7877473960730508076, guid: 9f3362370e1fe8d409ea20bea45305ff,
     type: 3}
-  m_PrefabInstance: {fileID: 3021299088996953496}
+  m_PrefabInstance: {fileID: 5379515584190581171}
   m_PrefabAsset: {fileID: 0}
