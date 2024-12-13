@@ -19,6 +19,8 @@ public enum InteractableHoverResponse
     None,
     Enable,
     Disable,
+    Open,
+    Close,
     Pick,
     DropThrow,
     Drop,
