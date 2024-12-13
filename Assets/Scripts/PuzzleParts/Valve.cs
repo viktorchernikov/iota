@@ -6,17 +6,13 @@ using UnityEngine.Events;
 public class Valve : MonoBehaviour, IInteractable
 {
     #region State
-    public bool isActive { get => _isActive; private set => _isActive = value; }
+    public bool isOpen { get => _isOpen; private set => _isOpen = value; }
     public bool isBusy { get => _isBusy; private set => _isBusy = value; }
-    #endregion
-    #region Events
-    public event Action onActivate;
-    public event Action onDeactivate;
     #endregion
 
     #region Editor State
     [Header("State")]
-    [SerializeField] bool _isActive = false;
+    [SerializeField] bool _isOpen = false;
     [SerializeField] bool _isBusy = false;
     #endregion
     #region Unity Events
@@ -31,7 +27,7 @@ public class Valve : MonoBehaviour, IInteractable
     #endregion
     #region Parameters
     [Header("Parameters")]
-    [SerializeField] bool _isActiveDefault = false;
+    [SerializeField] bool _isOpenDefault = false;
     #endregion
     #region Components
     [Header("Components")]
@@ -48,7 +44,7 @@ public class Valve : MonoBehaviour, IInteractable
         if (isBusy)
             return InteractableHoverResponse.None;
 
-        return isActive ? InteractableHoverResponse.Close : InteractableHoverResponse.Open;
+        return isOpen ? InteractableHoverResponse.Close : InteractableHoverResponse.Open;
     }
 
     public bool CanInteract(IInteractor interactor)
@@ -73,7 +69,7 @@ public class Valve : MonoBehaviour, IInteractable
         _audioSource.time = 0;
         _audioSource.pitch = 0.95f; // UnityEngine.Random.Range(0.8f, 1.05f);
         _audioSource.clip = _valveTurnSound;
-        if (isActive)
+        if (isOpen)
         {
             _animator.SetTrigger("OnClose");
         }
@@ -85,16 +81,14 @@ public class Valve : MonoBehaviour, IInteractable
 
         yield return new WaitForSeconds(_valveAnimationDelay);
 
-        isActive = !isActive;
-        if (isActive)
+        isOpen = !isOpen;
+        if (isOpen)
         {
             _onActivateEvent.Invoke();
-            onActivate?.Invoke();
         }
         else
         {
             _onDeactivateEvent.Invoke();
-            onDeactivate?.Invoke();
         }
 
         yield return new WaitForSeconds(_valvePostDelay);
