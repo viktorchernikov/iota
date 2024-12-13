@@ -36,8 +36,6 @@ public class KeypadController : MonoBehaviour, IInteractable
         get => _buttonPressClip;
         private set => _buttonPressClip = value;
     }
-
-
     #endregion
 
     #region Editor State
@@ -95,7 +93,6 @@ public class KeypadController : MonoBehaviour, IInteractable
     IEnumerator Enter()
     {
         IsBusy = true;
-        Debug.Log(passwordText.color);
 
         if (passwordText.text == password)
         {
@@ -109,10 +106,7 @@ public class KeypadController : MonoBehaviour, IInteractable
             _onDeactivateEvent.Invoke();
         }
 
-        Debug.Log(passwordText.color);
-
         yield return new WaitForSeconds(_validDelay);
-
         if (!IsActive) Clear();
 
         IsBusy = false;

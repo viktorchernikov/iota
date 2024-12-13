@@ -26,7 +26,7 @@ public class KeypadKey : MonoBehaviour, IInteractable
 
     public InteractableHoverResponse GetHoverResponse(IInteractor interactor)
     {
-        if (IsPressed)
+        if (IsPressed || controller.IsBusy)
             return InteractableHoverResponse.None;
 
         return controller.IsActive ? InteractableHoverResponse.None : InteractableHoverResponse.Enable;
@@ -42,7 +42,7 @@ public class KeypadKey : MonoBehaviour, IInteractable
 
     public void OnInteract(IInteractor interactor)
     {
-        if (IsPressed)
+        if (IsPressed || controller.IsBusy)
             return;
         StartCoroutine(OnPressedSequence());
     }
