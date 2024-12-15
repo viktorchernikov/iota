@@ -8,14 +8,14 @@ public class Valve : MonoBehaviour, IInteractable
     #region State
     public bool isOpen { get => _isOpen; private set => _isOpen = value; }
     public bool isHolding { get => _isHolding; private set => _isHolding = value; }
-    public bool isStarted { get => _isStarted; private set => _isStarted = value; }
+    //public bool isStarted { get => _isStarted; private set => _isStarted = value; }
     #endregion
 
     #region Editor State
     [Header("State")]
     [SerializeField] bool _isOpen = false;
     [SerializeField] bool _isHolding = false;
-    [SerializeField] bool _isStarted = false;
+    //[SerializeField] bool _isStarted = false;
     #endregion
     #region Unity Events
     [Header("Events")]
@@ -36,7 +36,7 @@ public class Valve : MonoBehaviour, IInteractable
     [SerializeField] Animator _animator;
     [SerializeField] AudioSource _audioSource;
     #endregion
-    #region
+    #region Sounds
     [Header("Sounds")]
     [SerializeField] AudioClip _valveTurnSound;
     #endregion
@@ -59,27 +59,39 @@ public class Valve : MonoBehaviour, IInteractable
 
     public void OnInteract(IInteractor interactor)
     {
-        if (isHolding)
+        if (Input.GetKeyUp(KeyCode.E) && isHolding && _animator.GetCurrentAnimatorStateInfo(0).normalizedTime < 1f)
+        {
+            _animator.speed = 0;
+            _audioSource.Pause();
             return;
+        }
         StartCoroutine(ValveSequence());
     }
 
     IEnumerator ValveSequence()
     {
-        isHolding = true;
-        _audioSource.Stop();
-        _audioSource.time = 0;
-        _audioSource.pitch = 0.95f; // UnityEngine.Random.Range(0.8f, 1.05f);
-        _audioSource.clip = _valveTurnSound;
-        if (isOpen)
+        if (!isHolding)
         {
-            _animator.SetTrigger("OnClose");
+            isHolding = true;
+            _audioSource.Stop();
+            _audioSource.time = 0;
+            _audioSource.pitch = 0.95f; // UnityEngine.Random.Range(0.8f, 1.05f);
+            _audioSource.clip = _valveTurnSound;
+            if (isOpen)
+            {
+                _animator.SetTrigger("OnClose");
+            }
+            else
+            {
+                _animator.SetTrigger("OnOpen");
+            }
+            _audioSource.Play();
         }
         else
         {
-            _animator.SetTrigger("OnOpen");
+            _animator.speed = 1;
+            _audioSource.Play();
         }
-        _audioSource.Play();
 
         yield return new WaitForSeconds(_valveAnimationDelay);
 
