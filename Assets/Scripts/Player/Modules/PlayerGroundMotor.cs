@@ -17,6 +17,7 @@ public sealed class PlayerGroundMotor : PlayerMotor
     public float jumpCooldown;
     public float airMultiplier;
     public AnimationCurve speedScalePropoprtion;
+    public bool Crouching => crouching;
     bool crouching;
     bool readyToJump;
 
@@ -102,6 +103,12 @@ public sealed class PlayerGroundMotor : PlayerMotor
 
 
     #region movent
+
+    public void StandFromCrouching()
+    {
+        transform.localScale = new Vector3(transform.localScale.x, standScaleY, transform.localScale.z);
+    }
+    
     private void UpdateTakenFromMovent()
     {
         MyInput();
@@ -288,12 +295,12 @@ public sealed class PlayerGroundMotor : PlayerMotor
 
     private void Crouch()
     {
-        if (Player.local.isDiving) return;
+        if (Player.local.isDiving && !crouching) return;
         
         crouching = !crouching;
 
         if (crouching) transform.localScale = new Vector3(transform.localScale.x, crouchScaleY, transform.localScale.z);
-        else transform.localScale = new Vector3(transform.localScale.x, standScaleY, transform.localScale.z);
+        else StandFromCrouching();
 
         rb.AddForce(Vector3.down * 5, ForceMode.Impulse);
     }

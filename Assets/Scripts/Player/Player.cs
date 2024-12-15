@@ -64,6 +64,7 @@ public sealed class Player : MonoBehaviour, IInteractor
     #region Components
     public PlayerCamera usedCamera { get; private set; }
     private PlayerCinematicController usedCinematicController;
+    private PlayerGroundMotor usedGroundMotor;
     /// <summary>
     /// A reference to the rigidbody component used by the player.
     /// </summary>
@@ -151,6 +152,8 @@ public sealed class Player : MonoBehaviour, IInteractor
 
     public void PlayerEnterWater(Vector3 teleportPoint, bool isDeadly)
     {
+        if (usedGroundMotor.Crouching) usedGroundMotor.StandFromCrouching();
+        
         isDiving = true;
     }
 
@@ -362,6 +365,7 @@ public sealed class Player : MonoBehaviour, IInteractor
         usedRigidbody = GetComponent<Rigidbody>();
         usedCamera = GetComponentInChildren<PlayerCamera>();
         usedCollider = GetComponentInChildren<CapsuleCollider>();
+        usedGroundMotor = GetComponent<PlayerGroundMotor>();
         usedCinematicController = GetComponent<PlayerCinematicController>();
 
         usedCamera.Unparent();
