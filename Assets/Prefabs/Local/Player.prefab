@@ -514,7 +514,7 @@ MonoBehaviour:
   minSprintStamina: 0
   Whenlessthenstoprun: 5
   currentStamina: 0
-  crouchKey: 0
+  crouchKey: 306
   jumpKey: 0
   sprintKey: 0
   groundCheckDistance: 0.3
