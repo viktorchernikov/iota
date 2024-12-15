@@ -17,6 +17,8 @@ public sealed class Player : MonoBehaviour, IInteractor
     public HidingSpot hidingSpot { get; private set; }
     public float currentScale { get; private set; } = 1;
     public PlayerDimensions currentDimensions { get; private set; } = new PlayerDimensions() { height = 2f, radius = 0.4f };
+    
+    public bool isDiving { get; private set; }
     /// <summary>
     /// Player's body forward vector.
     /// </summary>
@@ -147,6 +149,11 @@ public sealed class Player : MonoBehaviour, IInteractor
         StartCoroutine(HideInSpotCo(spot));
     }
 
+    public void PlayerEnterWater(Vector3 teleportPoint, bool isDeadly)
+    {
+        isDiving = true;
+    }
+
     private Vector3 _lastPosition;
     
     public void PlayerDiving(float divingDepth, Vector3 teleportPoint, bool isDeadly)
@@ -179,6 +186,11 @@ public sealed class Player : MonoBehaviour, IInteractor
         screenFade.FadeIn();
         usedRigidbody.isKinematic = false;
         duringCinematic = false;
+    }
+
+    public void PlayerExitWater()
+    {
+        isDiving = false;
     }
     
     IEnumerator HideInSpotCo(HidingSpot spot)

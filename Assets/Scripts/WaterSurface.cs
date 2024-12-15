@@ -106,6 +106,13 @@ public class WaterSurface : MonoBehaviour
       _levelPivotValue = transform.position.y;
    }
 
+   private void OnTriggerEnter(Collider other)
+   {
+      if (!other.gameObject.transform.parent.TryGetComponent<Player>(out var player)) return;
+
+      player.PlayerEnterWater(teleportPoint.transform.position, isDeadly);
+   }
+
    private void OnTriggerStay(Collider other)
    {
       if (!other.gameObject.transform.parent.TryGetComponent<Player>(out var player)) return;
@@ -113,6 +120,13 @@ public class WaterSurface : MonoBehaviour
       var playerDivingDepth = _levelPivotValue - other.bounds.min.y;
       
       player.PlayerDiving(playerDivingDepth, teleportPoint.transform.position, isDeadly);
+   }
+
+   private void OnTriggerExit(Collider other)
+   {
+      if (!other.gameObject.transform.parent.TryGetComponent<Player>(out var player)) return;
+
+      player.PlayerExitWater();
    }
 
    private void OnDrawGizmosSelected()

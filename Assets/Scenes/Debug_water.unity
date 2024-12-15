@@ -341,6 +341,11 @@ PrefabInstance:
       propertyPath: maxPlayerDivingDepth
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 7240982066532054418, guid: fa82ebade0587304886b167474cab2dc,
+        type: 3}
+      propertyPath: crouchKey
+      value: 306
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

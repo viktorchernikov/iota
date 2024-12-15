@@ -288,6 +288,8 @@ public sealed class PlayerGroundMotor : PlayerMotor
 
     private void Crouch()
     {
+        if (Player.local.isDiving) return;
+        
         crouching = !crouching;
 
         if (crouching) transform.localScale = new Vector3(transform.localScale.x, crouchScaleY, transform.localScale.z);
