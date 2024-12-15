@@ -297,6 +297,11 @@ public sealed class PlayerGroundMotor : PlayerMotor
     {
         if (Player.local.isDiving && !crouching) return;
         
+        var origin = new Vector3(transform.position.x, transform.position.y + crouchScaleY, transform.position.z);
+        
+        if (Physics.Raycast(origin, transform.up, out var hit,
+                Player.local.defaultDimensions.height - crouchScaleY) && crouching) return;
+        
         crouching = !crouching;
 
         if (crouching) transform.localScale = new Vector3(transform.localScale.x, crouchScaleY, transform.localScale.z);
