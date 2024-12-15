@@ -17866,6 +17866,18 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6a165bf9c840c424faa10a6ff96b7408, type: 3}
+--- !u!114 &726670780 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8922366600924541045, guid: 1db1f2a406efe33499c496c6cc673e47,
+    type: 3}
+  m_PrefabInstance: {fileID: 811953382}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6db9379279204e7ca3c03be17e33b46a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &811953382
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -17934,6 +17946,37 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1db1f2a406efe33499c496c6cc673e47, type: 3}
+--- !u!1 &811977596
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 811977597}
+  m_Layer: 0
+  m_Name: SpawnPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &811977597
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 811977596}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -7.54, y: 0.39, z: -1.27}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &814246995
 GameObject:
   m_ObjectHideFlags: 0
@@ -19599,6 +19642,16 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6355846757186079661, guid: fa82ebade0587304886b167474cab2dc,
+        type: 3}
+      propertyPath: screenFade
+      value: 
+      objectReference: {fileID: 726670780}
+    - target: {fileID: 6355846757186079661, guid: fa82ebade0587304886b167474cab2dc,
+        type: 3}
+      propertyPath: _spawnPoint
+      value: 
+      objectReference: {fileID: 811977597}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -19977,6 +20030,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: -0.000000008536322
+      objectReference: {fileID: 0}
+    - target: {fileID: 1673403590043689777, guid: 5a57f17c89a514c4fac062579f3efcbd,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1742418342408568518, guid: 5a57f17c89a514c4fac062579f3efcbd,
         type: 3}
@@ -20391,7 +20449,7 @@ PrefabInstance:
     - target: {fileID: 7287571641054498708, guid: 5a57f17c89a514c4fac062579f3efcbd,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8120854822000560256, guid: 5a57f17c89a514c4fac062579f3efcbd,
         type: 3}
@@ -20514,3 +20572,4 @@ SceneRoots:
   - {fileID: 1123742100}
   - {fileID: 1927346553}
   - {fileID: 690320651}
+  - {fileID: 811977597}
