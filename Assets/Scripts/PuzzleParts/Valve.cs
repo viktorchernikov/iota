@@ -8,14 +8,15 @@ public class Valve : MonoBehaviour, IInteractable
     #region State
     public bool isOpen { get => _isOpen; private set => _isOpen = value; }
     public bool isHolding { get => _isHolding; private set => _isHolding = value; }
-    //public bool isStarted { get => _isStarted; private set => _isStarted = value; }
     #endregion
 
     #region Editor State
     [Header("State")]
     [SerializeField] bool _isOpen = false;
     [SerializeField] bool _isHolding = false;
-    //[SerializeField] bool _isStarted = false;
+    [SerializeField] float minState = 0f;
+    [SerializeField] float maxState = 100f;
+    [SerializeField] float currentState = 0f;
     #endregion
     #region Unity Events
     [Header("Events")]
@@ -33,8 +34,8 @@ public class Valve : MonoBehaviour, IInteractable
     #endregion
     #region Components
     [Header("Components")]
-    [SerializeField] Animator _animator;
-    [SerializeField] AudioSource _audioSource;
+    //[SerializeField] Animator _animator;
+    //[SerializeField] AudioSource _audioSource;
     #endregion
     #region Sounds
     [Header("Sounds")]
@@ -59,13 +60,15 @@ public class Valve : MonoBehaviour, IInteractable
 
     public void OnInteract(IInteractor interactor)
     {
-        if (Input.GetKeyUp(KeyCode.E) && isHolding && _animator.GetCurrentAnimatorStateInfo(0).normalizedTime < 1f)
+        // _animator.GetCurrentAnimatorStateInfo(0).normalizedTime < 1f
+
+        if (Input.GetKeyUp(KeyCode.E) && isHolding && currentState < maxState)
         {
-            _animator.speed = 0;
-            _audioSource.Pause();
+            //_animator.speed = 0;
+            //_audioSource.Pause();
             return;
         }
-        StartCoroutine(ValveSequence());
+        StartCoroutine(ChangeState());
     }
 
     IEnumerator ValveSequence()
@@ -73,26 +76,29 @@ public class Valve : MonoBehaviour, IInteractable
         if (!isHolding)
         {
             isHolding = true;
-            _audioSource.Stop();
-            _audioSource.time = 0;
-            _audioSource.pitch = 0.95f; // UnityEngine.Random.Range(0.8f, 1.05f);
-            _audioSource.clip = _valveTurnSound;
+            //_audioSource.Stop();
+            //_audioSource.time = 0;
+            //_audioSource.pitch = 0.95f; // UnityEngine.Random.Range(0.8f, 1.05f);
+            //_audioSource.clip = _valveTurnSound;
             if (isOpen)
             {
-                _animator.SetTrigger("OnClose");
+                //_animator.SetTrigger("OnClose_Start");
+                //_animator.SetTrigger("OnClose_End");
             }
             else
             {
-                _animator.SetTrigger("OnOpen");
+                //_animator.SetTrigger("OnOpen_Start");
+                //_animator.SetTrigger("OnOpen_End");
             }
-            _audioSource.Play();
+            //_audioSource.Play();
         }
         else
         {
-            _animator.speed = 1;
-            _audioSource.Play();
+            //_animator.speed = 1;
+            //_audioSource.Play();
         }
 
+        yield return StartCoroutine(ChangeState());
         yield return new WaitForSeconds(_valveAnimationDelay);
 
         isOpen = !isOpen;
@@ -108,5 +114,21 @@ public class Valve : MonoBehaviour, IInteractable
         yield return new WaitForSeconds(_valvePostDelay);
 
         isHolding = false;
+    }
+
+    IEnumerator ChangeState()
+    {
+        if (isOpen && currentState > minState)
+        {
+            currentState -= (Time.deltaTime * 100);
+            Debug.Log($"Current time: {currentState}");
+        }
+        if (!isOpen && currentState < maxState)
+        {
+            currentState += (Time.deltaTime * 100);
+            Debug.Log($"Current time: {currentState}");
+        }
+
+        yield return null;
     }
 }
