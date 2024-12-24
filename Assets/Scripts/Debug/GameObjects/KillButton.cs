@@ -15,5 +15,8 @@ public class KillButton : MonoBehaviour, IInteractable
     public void OnInteract(IInteractor interactor)
     {
         Player.local.PrepareToDie(transform.position);
+        Player.local.Die();
+        LevelRestart.local.Restart();
+        
     }
 }

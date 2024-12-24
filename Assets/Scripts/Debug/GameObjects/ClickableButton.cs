@@ -1,10 +1,10 @@
 using TMPro;
 using UnityEngine;
 
-public class ClickableButton : MonoBehaviour, IInteractable
+public class ClickableButton : MonoBehaviour, IInteractable, IRestartable
 {
     [SerializeField] private TextMeshPro tip;
-    private bool _isClicked = false;
+    private bool _isClicked;
 
     public bool CanInteract(IInteractor interactor)
     {
@@ -20,5 +20,11 @@ public class ClickableButton : MonoBehaviour, IInteractable
     {
         _isClicked = true;
         tip.text = "Clicked";
+    }
+
+    public void RestartState()
+    {
+        _isClicked = false;
+        tip.text = "Was not clicked";
     }
 }
