@@ -131,14 +131,13 @@ public sealed class Player : MonoBehaviour, IInteractor
         usedRigidbody.isKinematic = false;
         duringCinematic = false;
     }
-    public void Teleport(Transform transform)
+    public void Teleport(Transform targetTransform)
     {
-        Teleport(transform.position);
+        Teleport(targetTransform.position);
     }
     public void Teleport(Vector3 position)
     {
         Debug.Log($"Teleported from: {transform.position}");
-        usedRigidbody.position = position;
         transform.position = position;
         Debug.Log($"Teleported to: {transform.position}");
     }

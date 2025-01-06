@@ -10,12 +10,11 @@ public class WaterSurface : MonoBehaviour
    [SerializeField] private int currentWaterLevelIndex = 0;
    [SerializeField] private float timeToChangeLevelInSeconds = 8;
    [SerializeField] private GameObject teleportPoint;
-   [SerializeField] private bool isDeadly;
       
    public List<float> WaterLevels => waterLevels.GetRange(0, waterLevels.Count);
    public int CurrentWaterLevelIndex => currentWaterLevelIndex;
    public bool IsBusy => _isBusy;
-   public bool IsDeadly { get; set; }
+    public bool IsDeadly { get; set; } = false;
    public event Action<int> OnWaterLevelChanged;
 
    private BoxCollider _collider;
@@ -55,12 +54,18 @@ public class WaterSurface : MonoBehaviour
 
    private void Update()
    {
-      if (Application.IsPlaying(gameObject)) return;
-
-      if (!waterLevels.Contains(0)) waterLevels.Add(0);
+       Monster monster = GameObject.FindAnyObjectByType<Monster>();
+       if (monster == null) return;
+       if (IsDeadly && monster.transform.position.y < transform.position.y)
+       {
+           Destroy(monster.gameObject);
+       }
+       if (Application.IsPlaying(gameObject)) return;
       
       waterLevels.Sort((a, b) => b.CompareTo(a));
       currentWaterLevelIndex = waterLevels.FindIndex(val => val == 0);
+
+      
    }
 
    private IEnumerator ChangeLevelCo(int toLevel)
@@ -108,11 +113,13 @@ public class WaterSurface : MonoBehaviour
 
    private void OnTriggerStay(Collider other)
    {
+      if (!other) return;
+      if (!other.gameObject.CompareTag("Player")) return;
       if (!other.gameObject.transform.parent.TryGetComponent<Player>(out var player)) return;
 
       var playerDivingDepth = _levelPivotValue - other.bounds.min.y;
       
-      player.PlayerDiving(playerDivingDepth, teleportPoint.transform.position, isDeadly);
+      player.PlayerDiving(playerDivingDepth, teleportPoint.transform.position, IsDeadly);
    }
 
    private void OnDrawGizmosSelected()
