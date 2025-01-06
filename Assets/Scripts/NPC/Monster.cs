@@ -314,7 +314,9 @@ public class Monster : MonoBehaviour
             yield return null;
         }
         Player.local.Die();
-        yield return new WaitForSeconds(3);
+        yield return new WaitForSeconds(2);
+        RestartPatrolling();
+        yield return new WaitForSeconds(1);
         agent.updateRotation = true;
         // tyle trwa animacja :-))
         agent.isStopped = false;
@@ -396,6 +398,16 @@ public class Monster : MonoBehaviour
     private Vector3 GetDirectionToPlayer(Transform fromTransform)
     {
         return ((GetPlayerPosition() + Vector3.up) - fromTransform.position).normalized;
+    }
+
+    private void RestartPatrolling()
+    {
+        currentPointId = 0;
+        nextPointId = 1;
+        patrolDirection = 1;
+        transform.position = GetPatrolPointPos(0);
+        behaviourMode = MonsterBehaviourMode.Patrol;
+        lastPlayerPosition = Vector3.zero;
     }
     #endregion
 
