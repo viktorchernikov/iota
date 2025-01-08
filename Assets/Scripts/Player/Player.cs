@@ -138,7 +138,7 @@ public sealed class Player : MonoBehaviour, IInteractor
     public void Teleport(Vector3 position)
     {
         Debug.Log($"Teleported from: {transform.position}");
-        transform.position = position;
+        usedRigidbody.position = position;
         Debug.Log($"Teleported to: {transform.position}");
     }
     public void HideInSpot(HidingSpot spot)
@@ -297,11 +297,11 @@ public sealed class Player : MonoBehaviour, IInteractor
             Vector3 position = usedRigidbody.position;
             // Rigidbody should be disabled.
             usedRigidbody.Sleep();
+            usedRigidbody.position = position;
             usedRigidbody.isKinematic = false;
             usedRigidbody.interpolation = RigidbodyInterpolation.Interpolate;
             usedRigidbody.WakeUp();
             // Character controller should be enabled.
-            transform.position = position;
         }
     }
 
