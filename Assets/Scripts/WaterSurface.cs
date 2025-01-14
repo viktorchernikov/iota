@@ -6,6 +6,11 @@ using UnityEngine;
 [ExecuteAlways]
 public class WaterSurface : MonoBehaviour
 {
+    public WaterSurfaceMode mode = WaterSurfaceMode.LevelRelative;
+
+    public float MinimumHeight = 0f;
+    public float MaximumHeight = 1f;
+
    [SerializeField] private List<float> waterLevels;
    [SerializeField] private int currentWaterLevelIndex = 0;
    [SerializeField] private float timeToChangeLevelInSeconds = 8;
@@ -43,7 +48,8 @@ public class WaterSurface : MonoBehaviour
 
    public void ChangeWaterLevel(int waterLevel)
    {
-      if (_isBusy) throw new Exception("Cannot change water level while already changing water level");
+      if (_isBusy) return;
+      if (mode != WaterSurfaceMode.LevelRelative) return;
       if (waterLevel < 0 || waterLevel >= waterLevels.Count) throw new Exception("Water Level Index out of bounds");
       if (currentWaterLevelIndex == waterLevel) return;
 
@@ -61,7 +67,8 @@ public class WaterSurface : MonoBehaviour
            Destroy(monster.gameObject);
        }
        if (Application.IsPlaying(gameObject)) return;
-      
+
+        if (mode != WaterSurfaceMode.LevelRelative) return;
       waterLevels.Sort((a, b) => b.CompareTo(a));
       currentWaterLevelIndex = waterLevels.FindIndex(val => val == 0);
 
@@ -103,6 +110,12 @@ public class WaterSurface : MonoBehaviour
       position.y = value;
       transform.position = position;
    }
+   public void SetY(Valve valve)
+   {
+        var position = transform.position;
+        position.y = Mathf.Lerp(MinimumHeight, MaximumHeight, valve.value);
+        transform.position = position;
+    }
    
    private void Awake()
    {
@@ -111,7 +124,28 @@ public class WaterSurface : MonoBehaviour
       _levelPivotValue = transform.position.y;
    }
 
-   private void OnTriggerStay(Collider other)
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (!other) return;
+
+        WaterDependant wd;
+
+        if (!other.gameObject.TryGetComponent<WaterDependant>(out wd)) return;
+
+        wd.NotifyInsideWater();
+    }
+    private void OnTriggerExit(Collider other)
+    {
+        if (!other) return;
+
+        WaterDependant wd;
+
+        if (!other.gameObject.TryGetComponent<WaterDependant>(out wd)) return;
+
+        wd.NotifyOutOfWater();
+    }
+    private void OnTriggerStay(Collider other)
    {
       if (!other) return;
       if (!other.gameObject.CompareTag("Player")) return;
@@ -119,11 +153,12 @@ public class WaterSurface : MonoBehaviour
 
       var playerDivingDepth = _levelPivotValue - other.bounds.min.y;
       
-      player.PlayerDiving(playerDivingDepth, teleportPoint.transform.position, IsDeadly);
+      player.PlayerDiving(playerDivingDepth, Vector3.zero, IsDeadly);
    }
 
    private void OnDrawGizmosSelected()
    {
+      if (mode != WaterSurfaceMode.LevelRelative) return;
       Gizmos.color = Color.green;
       var size = GetComponent<BoxCollider>().bounds.size;
       var p = transform.position;
@@ -138,4 +173,9 @@ public class WaterSurface : MonoBehaviour
          Gizmos.DrawLine(new Vector3(p.x - size.x / 2, y, p.z + size.z / 2), new Vector3(p.x - size.x / 2, y, p.z - size.z / 2));
       }
    }
+}
+public enum WaterSurfaceMode
+{
+    LevelRelative,
+    ValueRelative
 }

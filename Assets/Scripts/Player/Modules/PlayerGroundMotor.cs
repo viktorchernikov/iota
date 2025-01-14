@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using UnityEngine;
 
 public sealed class PlayerGroundMotor : PlayerMotor
@@ -16,8 +17,12 @@ public sealed class PlayerGroundMotor : PlayerMotor
     public float jumpForce;
     public float jumpCooldown;
     public float airMultiplier;
+    public bool isHeightAdapting = false;
+    public float heightAdaptStartTime = 0;
+    public float heightAdaptStartFraction = 0f;
+    public float heightAdaptDuration = 1.25f;
     public AnimationCurve speedScalePropoprtion;
-    bool crouching;
+    public bool crouching;
     bool readyToJump;
 
     [HideInInspector] public float moveSpeed;
@@ -41,6 +46,7 @@ public sealed class PlayerGroundMotor : PlayerMotor
     [SerializeField] public float groundCheckDistance = 0.3f;
     [SerializeField] public float groundCheckOffset = 0.01f;
     [SerializeField] public LayerMask whatIsGround;
+    [SerializeField] public WaterDependant waterDependency;
 
     public float speedofplayul = 0.1f;
     public bool audiocanplay = true;
@@ -97,6 +103,8 @@ public sealed class PlayerGroundMotor : PlayerMotor
     {
         
         UpdateTakenFromMovent();
+        AdaptCrouchStandHeight();
+        PreventSubmergedCrouching();
     }
 
 
@@ -133,6 +141,13 @@ public sealed class PlayerGroundMotor : PlayerMotor
         CounterScaleGravity();
     }
 
+    private void PreventSubmergedCrouching()
+    {
+        if (waterDependency.inWater && crouching && !isHeightAdapting)
+        {
+            Crouch();
+        }
+    }
     private void IsGronded() 
     {
         Vector3 origin = transform.position;
@@ -187,7 +202,7 @@ public sealed class PlayerGroundMotor : PlayerMotor
             Invoke(nameof(ResetJump), jumpCooldown);
         }
 
-        if (Input.GetKeyDown(crouchKey) && grounded)
+        if (Input.GetKeyDown(crouchKey) && grounded && !isHeightAdapting && !waterDependency.inWater)
         {
             Crouch();
         }
@@ -297,12 +312,44 @@ public sealed class PlayerGroundMotor : PlayerMotor
         if (crouching && wasHit && hitInfo.collider.tag != "Water") return;
         
         crouching = !crouching;
-
-        if (crouching) transform.localScale = new Vector3(transform.localScale.x, crouchScaleY, transform.localScale.z);
-        else transform.localScale = new Vector3(transform.localScale.x, standScaleY, transform.localScale.z);
-
-        rb.AddForce(Vector3.down * 5, ForceMode.Impulse);
     }
+    private void AdaptCrouchStandHeight()
+    {
+        bool notRightHeight = transform.localScale.y != (crouching ? crouchScaleY : standScaleY);
+        if (notRightHeight && !isHeightAdapting)
+        {
+            isHeightAdapting = true;
+            heightAdaptStartTime = Time.time;
+        }
+        else if (!notRightHeight && isHeightAdapting)
+        {
+            isHeightAdapting = false;
+        }
+
+        if (notRightHeight)
+        {
+            Vector3 oldScale = transform.localScale;
+
+            float from, to;
+            if (crouching && oldScale.y > crouchScaleY)
+            {
+                from = standScaleY;
+                to = crouchScaleY;
+            }
+            else
+            {
+                from = crouchScaleY;
+                to = standScaleY;
+            }
+
+            float fraction = Mathf.Clamp01((Time.time - heightAdaptStartTime) / heightAdaptDuration);
+            Vector3 newScale = transform.localScale;
+            newScale.y = Mathf.Lerp(from, to, fraction);
+            transform.localScale = newScale;
+        }
+
+    }
+
 
     private void RegenerateStamina()
     {

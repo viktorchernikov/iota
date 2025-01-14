@@ -174,7 +174,7 @@ public sealed class Player : MonoBehaviour, IInteractor
         screenFade.FadeOut();
         yield return new WaitForSeconds(1);
         yield return null;
-        Teleport(teleportPoint);
+        Teleport(_spawnPoint);
         screenFade.FadeIn();
         usedRigidbody.isKinematic = false;
         duringCinematic = false;

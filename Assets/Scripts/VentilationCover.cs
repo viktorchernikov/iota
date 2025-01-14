@@ -11,6 +11,7 @@ public class VentilationCover : MonoBehaviour, IInteractable
     private bool _isOpened;
     private Rigidbody _rb;
     private BoxCollider _collider;
+    [SerializeField] WaterDependant waterDependency;
 
     private void Awake()
     {
@@ -25,11 +26,19 @@ public class VentilationCover : MonoBehaviour, IInteractable
 
     public InteractableHoverResponse GetHoverResponse(IInteractor interactor)
     {
+        if (waterDependency.inWater)
+        {
+            return InteractableHoverResponse.WaterBlocked;
+        }
         return InteractableHoverResponse.Enable;
     }
 
     public void OnInteract(IInteractor interactor)
     {
+        if (waterDependency.inWater)
+        {
+            return;
+        }
         _rb.isKinematic = false;
         _rb.AddForce(transform.forward, ForceMode.Impulse);
         _isOpened = true;

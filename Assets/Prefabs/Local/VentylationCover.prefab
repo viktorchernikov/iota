@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 218303599857622667}
   - component: {fileID: 6624084878133722531}
   - component: {fileID: 8360305004119460502}
+  - component: {fileID: 1801658686578328027}
   m_Layer: 0
   m_Name: VentylationCover
   m_TagString: Untagged
@@ -147,3 +148,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   impulseForce: 2
+  waterDependency: {fileID: 1801658686578328027}
+--- !u!114 &1801658686578328027
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8455275894559423279}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 06abf49770091fd48b5a575a7e768f36, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inWater: 0

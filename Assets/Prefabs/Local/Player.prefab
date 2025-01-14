@@ -363,11 +363,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   initialScale: 1
+  maxPlayerDivingDepth: 0
   hidingTime: 0.75
   unhidingTime: 0.75
   ambientSource: {fileID: 0}
+  screenFade: {fileID: 0}
   modules: []
   _cameraAnchor: {fileID: 2519206363539622068}
+  _spawnPoint: {fileID: 0}
 --- !u!114 &6925379343021918699
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -481,6 +484,10 @@ MonoBehaviour:
   jumpForce: 0
   jumpCooldown: 0
   airMultiplier: 0.5
+  isHeightAdapting: 0
+  heightAdaptStartTime: 0
+  heightAdaptStartFraction: 0
+  heightAdaptDuration: 0.25
   speedScalePropoprtion:
     serializedVersion: 2
     m_Curve:
@@ -505,6 +512,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+  crouching: 0
   moveSpeed: 0
   standScaleY: 0
   StaminaWorkInSky: 1
@@ -522,6 +530,7 @@ MonoBehaviour:
   whatIsGround:
     serializedVersion: 2
     m_Bits: 1
+  waterDependency: {fileID: 2517113244419296911}
   speedofplayul: 0.1
   audiocanplay: 1
   defaultSounds: []
@@ -813,6 +822,7 @@ GameObject:
   - component: {fileID: 6905946935567619371}
   - component: {fileID: 1078019028856833030}
   - component: {fileID: 3850967224689112065}
+  - component: {fileID: 2517113244419296911}
   m_Layer: 3
   m_Name: Collider
   m_TagString: Player
@@ -866,6 +876,19 @@ CapsuleCollider:
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &2517113244419296911
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6510801011977748745}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 06abf49770091fd48b5a575a7e768f36, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inWater: 0
 --- !u!1001 &4690585348920283636
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -26,5 +26,6 @@ public enum InteractableHoverResponse
     Enter,
     Leave,
     Take,
+    WaterBlocked,
     Put
 }

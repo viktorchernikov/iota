@@ -61,7 +61,7 @@ public class PlayerInteractionSeeker : PlayerModule
     bool GetInput()
     {
         if (parent.duringCinematic || !parent.isAlive) return false;
-        return Input.GetKeyDown(KeyCode.E);
+        return Input.GetKey(KeyCode.E);
     }
 
     private void EndHover()

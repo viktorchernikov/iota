@@ -54,6 +54,10 @@ public class Monster : MonoBehaviour
     #endregion
 
     #region Logic
+    public void Die()
+    {
+
+    }
     private void FixedUpdate()
     {
          
