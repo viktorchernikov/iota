@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 4447460683577949816}
   m_Layer: 0
   m_Name: WaterSurface
-  m_TagString: Untagged
+  m_TagString: Water
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -125,7 +125,6 @@ MonoBehaviour:
   currentWaterLevelIndex: 0
   timeToChangeLevelInSeconds: 8
   teleportPoint: {fileID: 4157230223517241423}
-  isDeadly: 0
 --- !u!1 &4157230223517241423
 GameObject:
   m_ObjectHideFlags: 0
@@ -137,7 +136,7 @@ GameObject:
   - component: {fileID: 4318241823664999732}
   m_Layer: 0
   m_Name: GameObject
-  m_TagString: Untagged
+  m_TagString: Water
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

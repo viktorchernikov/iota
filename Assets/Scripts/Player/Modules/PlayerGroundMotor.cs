@@ -291,7 +291,10 @@ public sealed class PlayerGroundMotor : PlayerMotor
         var origin = Player.local.transform.position;
         origin.y += standScaleY;
 
-        if (crouching && Physics.Raycast(origin, Player.local.transform.up, Player.local.currentDimensions.height)) return;
+        RaycastHit hitInfo;
+        bool wasHit = Physics.Raycast(origin, Player.local.transform.up, out hitInfo, Player.local.currentDimensions.height);
+        
+        if (crouching && wasHit && hitInfo.collider.tag != "Water") return;
         
         crouching = !crouching;
 

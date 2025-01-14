@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Cuttable
   - katana
+  - Water
   layers:
   - Default
   - TransparentFX
