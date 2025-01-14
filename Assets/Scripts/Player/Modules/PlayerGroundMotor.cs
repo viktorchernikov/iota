@@ -288,6 +288,11 @@ public sealed class PlayerGroundMotor : PlayerMotor
 
     private void Crouch()
     {
+        var origin = Player.local.transform.position;
+        origin.y += standScaleY;
+
+        if (crouching && Physics.Raycast(origin, Player.local.transform.up, Player.local.currentDimensions.height)) return;
+        
         crouching = !crouching;
 
         if (crouching) transform.localScale = new Vector3(transform.localScale.x, crouchScaleY, transform.localScale.z);
